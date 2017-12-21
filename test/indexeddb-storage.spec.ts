@@ -9,7 +9,7 @@ describe('IndexedDB storage', () => {
 	let storage: BrowserStorage.IBrowserStorage;
 
 	before(() => {
-		Object.defineProperty(global, 'indexedDB', {
+		Object.defineProperty(global.window, 'indexedDB', {
 			value: Object.create(null),
 			configurable: false,
 			enumerable: true,

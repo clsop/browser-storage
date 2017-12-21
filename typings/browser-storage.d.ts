@@ -1,26 +1,32 @@
 declare namespace BrowserStorage {
 	export interface IBrowserStorage {
 		// get
-		public get<V extends Object | number | string>(key: string | Array<string>): Promise<KeyValue<V> | Array<KeyValue<V>>>;
+		public get<V extends Object | number | string>(key: string | Array<string>): Promise<KeyValueOrError<V> | Array<KeyValueOrError<V>>>;
 		
 		// set
-		public set<V extends Object | number | string>(data: KeyValue<V> | Array<KeyValue<V>>): Promise<KeyValue<V> | Array<KeyValue<V>>>;
+		public set<V extends Object | number | string>(data: KeyValue<V> | Array<KeyValue<V>>): Promise<KeyValueOrError<V> | Array<KeyValueOrError<V>>>;
 
 		// count
-		public count(): Promise<number>;
+		public count(): Promise<ValueOrError<number>>;
 
 		// delete
-		public remove(key: string | Array<string>): Promise<string | Array<string>>;
-		public clear(): Promise<void>;
-	}
-
-	export interface Error {
-		key: string;
-		error: string;
+		public remove(key: string | Array<string>): Promise<KeyValueOrError<void> | Array<KeyValueOrError<void>>>;
+		public clear(): Promise<ValueOrError<void>>;
 	}
 
 	export interface KeyValue<V> {
 		key: string;
 		value: V;
+	}
+
+	export interface KeyValueOrError<V> {
+		key: string;
+		value?: V;
+		error?: string;
+	}
+
+	export interface ValueOrError<V> {
+		value?: V;
+		error?: string;
 	}
 }

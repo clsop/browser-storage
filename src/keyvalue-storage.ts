@@ -1,69 +1,74 @@
 import BaseStorage from './base-storage';
+import { StorageType } from './enums';
 
 export default class KeyValueStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
 	private readonly storage: Storage;
 
-	constructor(storage: Storage) {
-		super();
+	constructor(storage: Storage, type: StorageType) {
+		super(type);
 
 		this.storage = storage;
 	}
 
-	private resolveValue<V extends Object | number | string>(rawValue: any): V {
+	private parseValue<V extends Object | number | string>(rawValue: any): V {
 		let value: V = null;
 
 		try {
 			value = JSON.parse(rawValue);
 		} catch (ex) {
+			// if not json use the raw value
 			value = rawValue;
 		}
 
 		return value;
 	}
 
-	public get<V extends Object | number | string>(key: string | Array<string>): Promise<BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>> {
-		return new Promise<BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>>(
-			(resolve: (value?: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>) => void,
+	public get<V extends Object | number | string>(key: string | Array<string>): Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>> {
+		return new Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>>(
+			(resolve: (value?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void,
 				reject: (reason?: any) => void) => {
 				this.asArray<string>(key, (keys: Array<string>) => {
-					let values: Array<BrowserStorage.KeyValue<V>> = [];
-					let errors: Array<BrowserStorage.Error> = [];
+					let values: Array<BrowserStorage.KeyValueOrError<V>> = [];
+					let errors: Array<BrowserStorage.KeyValueOrError<V>> = [];
 
 					for (let index in keys) {
 						let key: string = keys[index];
-						let value: V = this.resolveValue<V>(this.storage.getItem(key));
+						let value: V = this.parseValue<V>(this.storage.getItem(key));
 
-						if (!value) {
-							errors.push({ key: key, error: `Local storage: value with key "${key}" was not found!` });
-						} else {
+						if (value !== null) {
 							values.push({ key: key, value: value });
+						} else {
+							errors.push({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" was not found!` });
 						}
 					}
-
+					
 					// all keys was missing
 					if (errors.length === keys.length) {
 						reject(errors);
+					} else if (errors.length > 0) {
+						values.push(...errors);
+						resolve(values);
 					} else {
 						resolve(values);
 					}
 				}, (key: string) => {
-					let value: V = this.resolveValue<V>(this.storage.getItem(key));
-
-					if (!value) {
-						reject({ key: key, error: `Local storage: value with key "${key}" was not found!` });
-					} else {
+					let value: V = this.parseValue<V>(this.storage.getItem(key));
+					
+					if (value !== null) {
 						resolve({ key: key, value: value });
+					} else {
+						reject({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" was not found!` });
 					}
 				});
 			});
 	}
 
-	public set<V extends Object | number | string>(data: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>): Promise<BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>> {
-		return new Promise<BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>>(
-			(resolve: (value?: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>) => void,
+	public set<V extends Object | number | string>(data: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>): Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>> {
+		return new Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>>(
+			(resolve: (value?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void,
 				reject: (reason?: any) => void) => {
 				this.asArray<BrowserStorage.KeyValue<V>>(data, (data: Array<BrowserStorage.KeyValue<V>>) => {
-					let values: Array<BrowserStorage.KeyValue<V>> = [];
+					let values: Array<BrowserStorage.KeyValueOrError<V>> = [];
 
 					for (let index in data) {
 						let key = data[index].key;
@@ -74,7 +79,7 @@ export default class KeyValueStorage extends BaseStorage implements BrowserStora
 					}
 					
 					resolve(values);
-				}, (data: BrowserStorage.KeyValue<V>) => {
+				}, (data: BrowserStorage.KeyValueOrError<V>) => {
 					this.storage.setItem(data.key, JSON.stringify(data.value));
 
 					resolve({ key: data.key, value: data.value });
@@ -82,54 +87,57 @@ export default class KeyValueStorage extends BaseStorage implements BrowserStora
 			});
 	}
 
-	public count(): Promise<number> {
-		return new Promise<number>(
-			(resolve: (value?: number) => void, reject: (reason?: any) => void) => {
-				resolve(this.storage.length);
+	public count(): Promise<BrowserStorage.ValueOrError<number>> {
+		return new Promise <BrowserStorage.ValueOrError<number>> (
+			(resolve: (value?: BrowserStorage.ValueOrError<number>) => void, reject: (reason?: any) => void) => {
+				resolve({ value: this.storage.length });
 			});
 	}
 
-	public remove(key: string | Array<string>): Promise<string | Array<string>> {
-		return new Promise<string | Array<string>>(
-			(resolve: (value?: string | Array<string>) => void,
-				reject: (reason?: any) => void) => {
+	public remove(key: string | Array<string>): Promise<BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>> {
+		return new Promise<BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>>(
+			(resolve: (value?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void,
+				reject: (reason?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void) => {
 				this.asArray<string>(key, (keys: Array<string>) => {
-					let removedKeys: Array<string> = [];
-					let errors: Array<BrowserStorage.Error> = [];
+					let removedKeys: Array<BrowserStorage.KeyValueOrError<void>> = [];
+					let errors: Array<BrowserStorage.KeyValueOrError<void>> = [];
 
 					for (let index in keys) {
 						let key: string = keys[index];
 
 						if (this.storage.getItem(key) !== null) {
-							errors.push({ key: key, error: `Local storage: value with key "${key}" could not be removed!` });
+							this.storage.removeItem(key);
+							removedKeys.push({ key: key });
 						} else {
-							this.storage.removeItem(key);	
-							removedKeys.push(key);
+							errors.push({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" could not be removed!` });
 						}
 					}
 
 					// all keys failed removal
 					if (errors.length === keys.length) {
 						reject(errors);
+					} else if (errors.length > 0) {
+						removedKeys.push(...errors);
+						resolve(removedKeys);
 					} else {
-						resolve(removedKeys);	
+						resolve(removedKeys);
 					}
 				}, (key: string) => {
 					if (this.storage.getItem(key) !== null) {
 						this.storage.removeItem(key);
-						resolve(key);
+						resolve({ key: key });
 					} else {
-						reject({ key: key, error: `Local storage: value with key "${key}" could not be removed!` });
+						reject({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" could not be removed!` });
 					}
 					
 				});
 			});
 	}
 
-	public clear(): Promise<void> {
-		return new Promise<void>(
-			(resolve: (value?: void) => void,
-				reject: (reason?: any) => void) => {
+	public clear(): Promise<BrowserStorage.ValueOrError<void>> {
+		return new Promise<BrowserStorage.ValueOrError<void>>(
+			(resolve: (value?: BrowserStorage.ValueOrError<void>) => void,
+				reject: (reason?: BrowserStorage.ValueOrError<void>) => void) => {
 				this.storage.clear();
 				resolve();
 			});

@@ -1,5 +1,6 @@
 import ApiObject from './api-object';
 
+import { StorageType } from '../enums';
 import KeyValueStorage from '../keyvalue-storage';
 import CookieStorageApi from './cookie-storage-api';
 
@@ -9,12 +10,12 @@ export default class SessionStorageApi extends ApiObject {
 	}
 
 	public use(): BrowserStorage.IBrowserStorage {
-		if (sessionStorage !== undefined &&
-			"setItem" in sessionStorage &&
-			"getItem" in sessionStorage &&
-			"removeItem" in sessionStorage &&
-			"clear" in sessionStorage) {
-			return new KeyValueStorage(sessionStorage);
+		if (window.sessionStorage !== undefined &&
+			"setItem" in window.sessionStorage &&
+			"getItem" in window.sessionStorage &&
+			"removeItem" in window.sessionStorage &&
+			"clear" in window.sessionStorage) {
+			return new KeyValueStorage(window.sessionStorage, StorageType.Session);
 		}
 
 		return this.nextApi.use();

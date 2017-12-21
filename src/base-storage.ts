@@ -1,5 +1,10 @@
+import { StorageType } from './enums';
+
 export default abstract class BaseStorage {
-	constructor() {
+	protected storageType: StorageType;
+
+	constructor(type: StorageType) {
+		this.storageType = type;
 	}
 
 	protected asArray = <T>(typeAsValue: any, aPredicate: (value: Array<T>) => void, vPredicate: (value: T) => void) => {

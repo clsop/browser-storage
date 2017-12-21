@@ -9,8 +9,8 @@ export default class SessionStorageApi extends ApiObject {
 	}
 
 	public use(): BrowserStorage.IBrowserStorage {
-		if (indexedDB !== undefined) {
-			return new IndexedDBStorage(indexedDB);
+		if (window.indexedDB !== undefined) {
+			return new IndexedDBStorage(window.indexedDB);
 		}
 
 		return this.nextApi.use();
