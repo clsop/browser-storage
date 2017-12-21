@@ -1,14 +1,11 @@
 {
-  "name": "browser_storage",
+  "name": "browser-storage",
   "version": "0.0.1",
   "description": "Api for different browser storage with fallbacks (localstorage, sessionstorage, indexedDB)",
   "main": "index.js",
   "author": "clsop <shanknet85@gmail.com>",
   "license": "MIT",
   "private": false,
-  "publishConfig": {
-    "registry": "http://data.shanknet.local:5984"
-  },
   "scripts": {
     "pretest": "rm -f src/*.js && rm -f src/**/*.js && rm -f test/*.js && tsc",
     "test": "mocha --opts mocha.opts test/"
