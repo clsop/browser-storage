@@ -9,7 +9,7 @@ import { StorageType } from '../src/enums';
 
 describe('Api fallbacks', () => {
 	let defineCookie = () => {
-		Object.defineProperty(global.document, 'cookie', {
+		Object.defineProperty(document, 'cookie', {
 			value: "",
 			configurable: true
 		});
