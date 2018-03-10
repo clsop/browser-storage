@@ -7,7 +7,7 @@ import BrowserStorage from '../src/browser-storage';
 import KeyValueStorage from '../src/keyvalue-storage';
 
 // session and local storage has similar api
-describe('KeyValue storage', () => {
+describe('KeyValue storage (localStorage and sessionStorage)', () => {
 	let storage: BrowserStorage.IBrowserStorage;
 	let api: Test.Storage;
 

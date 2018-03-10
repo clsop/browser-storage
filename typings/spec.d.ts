@@ -20,4 +20,9 @@ declare namespace Test {
 		removeItem: sinon.SinonSpy;
 		clear: sinon.SinonSpy;
 	}
+
+	export interface Cookie {
+		get: sinon.SinonStubbedInstance;
+		set: sinon.SinonSpy;
+	}
 }
