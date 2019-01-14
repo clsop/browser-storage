@@ -1,5 +1,5 @@
 import BaseStorage from './base-storage';
-import { StorageType } from './enums';
+import { StorageType } from '../storage-type';
 
 export default class IndexedDBStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
 	private indexedDB: IDBFactory;

@@ -1,0 +1,4 @@
+--full-trace
+--bail
+--recursive test/tmp
+--ui mocha-typescript

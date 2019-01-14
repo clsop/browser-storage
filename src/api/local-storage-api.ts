@@ -1,8 +1,8 @@
 import ApiObject from './api-object';
 
-import { StorageType } from '../enums';
+import { StorageType } from '../storage-type';
 import CookieStorageApi from './cookie-storage-api';
-import KeyValueStorage from '../keyvalue-storage';
+import KeyValueStorage from '../storage/keyvalue-storage';
 
 export default class LocalStorageApi extends ApiObject {
 	constructor() {
@@ -10,7 +10,7 @@ export default class LocalStorageApi extends ApiObject {
 	}
 
 	public use(): BrowserStorage.IBrowserStorage {
-		if (window.localStorage !== undefined &&
+		if ("localStorage" in window &&
 			"setItem" in window.localStorage &&
 			"getItem" in window.localStorage &&
 			"removeItem" in window.localStorage &&

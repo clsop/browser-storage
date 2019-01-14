@@ -1,0 +1,1228 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"getS",
+				"getStub\tlet"
+			],
+			[
+				"retur",
+				"returns\tmethod"
+			],
+			[
+				"SinonSpy",
+				"SinonSpyStatic\tinterface"
+			],
+			[
+				"SinonSta",
+				"SinonStubStatic\tinterface"
+			],
+			[
+				"pro",
+				"proto\tPrototype"
+			],
+			[
+				"ca",
+				"calledWithExactly\tmethod"
+			],
+			[
+				"st",
+				"storage\tdirectory"
+			],
+			[
+				"storage",
+				"storage-type\tscript"
+			],
+			[
+				"called",
+				"calledWithExactly\tmethod"
+			],
+			[
+				"und",
+				"undefineCookie\tproperty"
+			],
+			[
+				"de",
+				"defineCookie\tproperty"
+			],
+			[
+				"unde",
+				"undefineStorage\tproperty"
+			],
+			[
+				"req",
+				"request\tproperty"
+			],
+			[
+				"name",
+				"namespace\tkeyword"
+			],
+			[
+				"disco",
+				"StructureDiscovery"
+			],
+			[
+				"Dis",
+				"Discipline"
+			],
+			[
+				"identi",
+				"identificatorMatches"
+			],
+			[
+				"ex",
+				"expectedEntries\tstatement"
+			],
+			[
+				"da",
+				"datetime"
+			],
+			[
+				"en",
+				"entries"
+			],
+			[
+				"entr",
+				"entriesCnt\tstatement"
+			],
+			[
+				"entry",
+				"entryAmount\tparam"
+			],
+			[
+				"rand",
+				"randrange\tstatement"
+			],
+			[
+				"pa",
+				"patch\tfunction"
+			],
+			[
+				"language",
+				"languages\tparam"
+			],
+			[
+				"_tra",
+				"_translationTable"
+			],
+			[
+				"subject",
+				"subjectNews\tstatement"
+			],
+			[
+				"structur",
+				"structureNews\tstatement"
+			],
+			[
+				"asse",
+				"assertNews"
+			],
+			[
+				"subje",
+				"subjectName\tstatement"
+			],
+			[
+				"struc",
+				"structureName\tstatement"
+			],
+			[
+				"ident",
+				"identifiableType"
+			],
+			[
+				"Str",
+				"StructureDiscovery\tmodule"
+			],
+			[
+				"a",
+				"authors"
+			],
+			[
+				"local",
+				"localDateTime\tstatement"
+			],
+			[
+				"utcDate",
+				"utcDateTime\tstatement"
+			],
+			[
+				"localDa",
+				"localDateTime\tstatement"
+			],
+			[
+				"str",
+				"strptime"
+			],
+			[
+				"column",
+				"columnCell\tstatement"
+			],
+			[
+				"exis",
+				"existingUnSubjectedNews\tstatement"
+			],
+			[
+				"existing",
+				"existingUnStructuredNews\tstatement"
+			],
+			[
+				"column_",
+				"column_dimension"
+			],
+			[
+				"col",
+				"column_dimensions"
+			],
+			[
+				"work",
+				"worksheet\tstatement"
+			],
+			[
+				"News",
+				"NewsQuerySet\tclass"
+			],
+			[
+				"d",
+				"db\tmodule"
+			],
+			[
+				"re",
+				"replace"
+			],
+			[
+				"se",
+				"segment"
+			],
+			[
+				"u",
+				"utc"
+			],
+			[
+				"read",
+				"readNumber\tstatement"
+			],
+			[
+				"res",
+				"response\tparam"
+			],
+			[
+				"eve",
+				"event"
+			],
+			[
+				"attac",
+				"attachment_filename\tparam"
+			],
+			[
+				"w",
+				"write\tfunction"
+			],
+			[
+				"Name",
+				"NamedTemporaryFile\tfunction"
+			],
+			[
+				"att",
+				"attachment_filename\tparam"
+			],
+			[
+				"Disco",
+				"DiscoveryParser\tclass"
+			],
+			[
+				"Struc",
+				"StructureParser\tclass"
+			],
+			[
+				"trans",
+				"translations\tmodule"
+			],
+			[
+				"sorted",
+				"sortedEntries\tstatement"
+			],
+			[
+				"EmbeddedD",
+				"EmbeddedDocument\tclass"
+			],
+			[
+				"Em",
+				"EmbeddedDocumentListField\tclass"
+			],
+			[
+				"Refere",
+				"ReferenceField\tclass"
+			],
+			[
+				"min_",
+				"min_length"
+			],
+			[
+				"di",
+				"discovery_identificator\tmodule"
+			],
+			[
+				"async",
+				"asyncio"
+			],
+			[
+				"matc",
+				"matches\tstatement"
+			],
+			[
+				"id",
+				"identifiables"
+			],
+			[
+				"Discover",
+				"discover"
+			],
+			[
+				"disc",
+				"discovery_type"
+			],
+			[
+				"discove",
+				"Discovery\tclass"
+			],
+			[
+				"publis",
+				"published_parsed"
+			],
+			[
+				"impo",
+				"importers\tmodule"
+			],
+			[
+				"rss",
+				"rss_importer\tmodule"
+			],
+			[
+				"im",
+				"imports\tstatement"
+			],
+			[
+				"class",
+				"classmethod\tmodule"
+			],
+			[
+				"run_un",
+				"run_until_complete"
+			],
+			[
+				"run",
+				"run_coroutine_threadsafe\tfunction"
+			],
+			[
+				"__",
+				"__import__\tfunction"
+			],
+			[
+				"run_",
+				"run_coroutine_threadsafe\tfunction"
+			],
+			[
+				"new",
+				"news_source\tmodule"
+			],
+			[
+				"Dyna",
+				"DynamicField\tclass"
+			],
+			[
+				"news",
+				"news_source"
+			],
+			[
+				"Disc",
+				"DiscoveryIdentificator\tclass"
+			],
+			[
+				"ide",
+				"discovery_identificator\tmodule"
+			],
+			[
+				"max",
+				"max_length\tparam"
+			],
+			[
+				"Embedd",
+				"EmbeddedDocumentListField\tclass"
+			],
+			[
+				"Embe",
+				"EmbeddedDocumentListField\tclass"
+			],
+			[
+				"file",
+				"filename"
+			],
+			[
+				"struct",
+				"structureTypes"
+			],
+			[
+				"structure_",
+				"structure_type\tmodule"
+			],
+			[
+				"Structure",
+				"StructureSegment\tclass"
+			],
+			[
+				"Object",
+				"ObjectIdField\tclass"
+			],
+			[
+				"header",
+				"header_cells\tstatement"
+			],
+			[
+				"loa",
+				"loads\tfunction"
+			],
+			[
+				"get",
+				"gettempdir\tfunction"
+			],
+			[
+				"Temporar",
+				"TemporaryFile\tfunction"
+			],
+			[
+				"Exce",
+				"ExcelParser\tmodule"
+			],
+			[
+				"s",
+				"structure\tmodule"
+			],
+			[
+				"allow",
+				"allowed_extensions\tstatement"
+			],
+			[
+				"ass",
+				"assets_folder\tstatement"
+			],
+			[
+				"mni",
+				"min_length"
+			],
+			[
+				"regis",
+				"register_blueprint\tfunction"
+			],
+			[
+				"dis",
+				"discovery\tmodule"
+			],
+			[
+				"sc",
+				"structure_segment\tmodule"
+			],
+			[
+				"r",
+				"required"
+			],
+			[
+				"assertIs",
+				"assertIsNone\tfunction"
+			],
+			[
+				"comple",
+				"completedDate\tparam"
+			],
+			[
+				"com",
+				"isCompleted"
+			],
+			[
+				"static",
+				"staticDate\tstatement"
+			],
+			[
+				"isI",
+				"assertIsInstance\tfunction"
+			],
+			[
+				"isFinis",
+				"isFinishedFalse\tstatement"
+			],
+			[
+				"B",
+				"MAX_BITRATE"
+			],
+			[
+				"RA",
+				"RATE_HZ"
+			],
+			[
+				"OUT",
+				"OUTFORMAT"
+			],
+			[
+				"inline",
+				"inline-block"
+			],
+			[
+				"IN",
+				"LOG_INFO\tinstance"
+			],
+			[
+				"tra",
+				"transmissionResponse"
+			],
+			[
+				"tansmi",
+				"transmissionLog"
+			],
+			[
+				"assert",
+				"assert_called_once"
+			],
+			[
+				"As",
+				"AsyncTestCase\tclass"
+			],
+			[
+				"E",
+				"LOG_ERR\tinstance"
+			],
+			[
+				"asser",
+				"assert_called_once"
+			],
+			[
+				"tansmis",
+				"transmissionRequest\tmodule"
+			],
+			[
+				"reques",
+				"requestBody\tstatement"
+			],
+			[
+				"response",
+				"responseCode\tstatement"
+			],
+			[
+				"De",
+				"LOG_DEBUG\tinstance"
+			],
+			[
+				"D",
+				"LOG_DEBUG\tinstance"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "test/cookie-storage.spec.ts",
+			"settings":
+			{
+				"buffer_size": 5916,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/api-fallbacks.spec.ts",
+			"settings":
+			{
+				"buffer_size": 2533,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/stubs.ts",
+			"settings":
+			{
+				"buffer_size": 2397,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 398.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Error",
+				"TypeScript: Show Error List"
+			],
+			[
+				"error",
+				"TypeScript: Show Error List"
+			],
+			[
+				"Err",
+				"TypeScript: Show Error List"
+			],
+			[
+				"typesc",
+				"TypeScript: Format Document"
+			],
+			[
+				"Format",
+				"TypeScript: Format Document"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: List Unmanaged Packages"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"package install",
+				"Package Control: Install Package"
+			],
+			[
+				"package ins",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"orgmode",
+				"Preferences: orgmode Settings – Default"
+			],
+			[
+				"Package Control: ins",
+				"Package Control: Install Package"
+			],
+			[
+				"package list",
+				"Package Control: List Packages"
+			],
+			[
+				"package remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"package re",
+				"Package Control: Remove Package"
+			],
+			[
+				"pac",
+				"Preferences: Browse Packages"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"install package",
+				"Package Control: Install Package"
+			],
+			[
+				"packages",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 463.0
+	},
+	"console":
+	{
+		"height": 137.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"help",
+			"ls",
+			"grunt",
+			"package install bootstrap",
+			"package install",
+			"help",
+			"bower",
+			"ls",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"package control",
+			"pkm",
+			"package:install",
+			"package install",
+			"package",
+			"package install",
+			"install package",
+			"install packages",
+			"package install"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/extra/misc/Coding_Projects/js/browser-storage",
+		"/extra/misc/Coding_Projects/js/browser-storage/src",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/api",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/storage",
+		"/extra/misc/Coding_Projects/js/browser-storage/test"
+	],
+	"file_history":
+	[
+		"/extra/misc/Coding_Projects/js/browser-storage/.pnpm-store/2/dev.shanknet.local+4873/@shanknet-types/browser-storage/0.0.1/node_modules/@shanknet-types/browser-storage/index.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/global.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/node_modules/.dev.shanknet.local+4873/@shanknet-types/browser-storage/0.0.1/node_modules/@shanknet-types/browser-storage/index.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/storage-type.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/api-fallbacks.spec.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/api/local-storage-api.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/tsconfig-test.json",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/indexeddb-storage.spec.ts.bak",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/keyvalue-storage.spec.ts.bak",
+		"/extra/misc/Coding_Projects/js/browser-storage/package.json",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/stubs.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/cookie-storage.spec.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/tsconfig.json",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/api/cookie-storage-api.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/storage/cookie-storage.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/cookie-storage.spec.ts.bak",
+		"/extra/misc/Coding_Projects/js/http-request/test/http_request_tests.ts",
+		"/extra/misc/Coding_Projects/js/http-request/tsconfig-test.json",
+		"/extra/misc/Coding_Projects/js/http-request/package.json",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/keyvalue-storage.spec.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/indexeddb-storage.spec.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/typings/global.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/.pnpm-store/2/dev.shanknet.local+4873/nyc/13.1.0/node_modules/nyc/node_modules/yargs/yargs.js",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/typings/index.d.ts",
+		"/extra/misc/Coding_Projects/js/http-request/src/typings/index.d.ts",
+		"/extra/misc/Coding_Projects/js/http-request/src/typings/global.d.ts",
+		"/extra/misc/Coding_Projects/js/http-request/test/api_tests.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/.pnpm-store/2/dev.shanknet.local+4873/@types/mocha/5.2.5/node_modules/@types/mocha/index.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/typings/index.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/storage/keyvalue-storage.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/browser-storage.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/index.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/typings/internals.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/api/session-storage-api.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/api/indexeddb-storage-api.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/storage/indexeddb-storage.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/storage/base-storage.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/keyvalue-storage.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/.gitignore",
+		"/extra/misc/Coding_Projects/js/typings/browser-storage/index.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/typings/spec.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/base-storage.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/api/api-object.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/src/exceptions/browser-api-error.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/test/mocha.opts",
+		"/extra/misc/Coding_Projects/js/browser-storage/index.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/typings/internals.d.ts",
+		"/extra/misc/Coding_Projects/js/browser-storage/.npmrc",
+		"/extra/misc/Coding_Projects/js/browser-storage/.npmignore",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/client/service/base-service.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/tsconfig.json",
+		"/extra/misc/Coding_Projects/web/applications/TR/package.json",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.1.0/node_modules/@shanknet/http-request/lib/index.d.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.1.0/node_modules/@shanknet/http-request/src/typings/index.d.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.92/node_modules/@shanknet/http-request/package.json",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.92/node_modules/@shanknet/http-request/src/typings/main.d.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.92/node_modules/@shanknet/http-request/index.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/.pnpm-store/2/dev.shanknet.local+4873/@shanknet/http-request/0.0.8/node_modules/@shanknet/http-request/src/typings/index.d.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.92/node_modules/@shanknet/http-request/src/typings/internal.d.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.92/node_modules/@shanknet/http-request/src/typings/index.d.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/.pnpm-store/2/dev.shanknet.local+4873/@shanknet/http-request/0.0.8/node_modules/@shanknet/http-request/src/http_request.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.8/node_modules/@shanknet/http-request/src/index.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.8/node_modules/@shanknet/http-request/package.json",
+		"/home/clayzzz/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/clayzzz/.config/sublime-text-3/Packages/TypeScript/Preferences.sublime-settings",
+		"/home/clayzzz/.config/sublime-text-3/Packages/TypeScript/TypeScript.sublime-settings",
+		"/home/clayzzz/.config/sublime-text-3/Packages/TypeScript/TypeScriptReact.sublime-settings",
+		"/extra/misc/Coding_Projects/web/applications/TR/node_modules/.dev.shanknet.local+4873/@shanknet/http-request/0.0.8/node_modules/@shanknet/http-request/src/typings/index.d.ts",
+		"/home/clayzzz/.config/sublime-text-3/Packages/User/TypeScript.sublime-settings",
+		"/extra/misc/Coding_Projects/js/http-request/mocha.opts",
+		"/extra/misc/Coding_Projects/js/http-request/.gitignore",
+		"/extra/misc/Coding_Projects/js/http-request/tsconfig.json",
+		"/extra/misc/Coding_Projects/js/http-request/src/HttpRequest.ts",
+		"/extra/misc/Coding_Projects/js/http-request/test/common_tests.ts",
+		"/extra/misc/Coding_Projects/js/http-request/test/fail_tests.ts",
+		"/extra/misc/Coding_Projects/js/http-request/test/object_tests.ts",
+		"/extra/misc/Coding_Projects/js/http-request/test/success_tests.ts",
+		"/extra/misc/Coding_Projects/js/http-request/src/exceptions/HttpRequestError.ts",
+		"/extra/misc/Coding_Projects/js/http-request/src/FailResponse.ts",
+		"/extra/misc/Coding_Projects/js/http-request/src/Response.ts",
+		"/extra/misc/Coding_Projects/js/http-request/src/exceptions/HttpResponseError.ts",
+		"/extra/misc/Coding_Projects/web/applications/TR/docker/prod/docker-compose.yml",
+		"/extra/misc/Coding_Projects/js/http-request/src/ResponseHandler.ts",
+		"/extra/misc/Coding_Projects/js/http-request/src/index.ts",
+		"/extra/misc/Coding_Projects/js/test-request/src/test.ts",
+		"/extra/misc/Coding_Projects/js/test-request/src/test.js",
+		"/extra/misc/Coding_Projects/web/applications/TL/docker/dev/docker-compose.yml",
+		"/extra/misc/Coding_Projects/web/applications/TL/webpack.dev.config.js",
+		"/extra/misc/Coding_Projects/web/applications/TL/webpack.shared.config.js",
+		"/extra/misc/Coding_Projects/web/applications/TL/webpack.prod.config.js",
+		"/extra/misc/Coding_Projects/web/applications/TL/src/server/main.py",
+		"/extra/misc/Coding_Projects/web/applications/TL/test/server/torrent_listing_tests.py",
+		"/extra/misc/Coding_Projects/web/applications/TL/src/client/app.tsx",
+		"/extra/misc/Coding_Projects/web/applications/TL/src/client/index-dev.hbs",
+		"/extra/misc/Coding_Projects/web/applications/TL/src/client/index.hbs",
+		"/extra/misc/Coding_Projects/web/applications/TL/run_server_tests.sh",
+		"/extra/misc/Coding_Projects/web/applications/TL/test/run_server_tests.sh",
+		"/extra/misc/Coding_Projects/web/applications/TL/.gitignore",
+		"/extra/misc/Coding_Projects/web/applications/TL/docker/Dockerfile",
+		"/extra/misc/Coding_Projects/web/applications/TL/requirements.txt",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/main.py",
+		"/extra/misc/Coding_Projects/web/applications/TL/prestart.sh",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/requirements.txt",
+		"/extra/misc/Coding_Projects/web/applications/TR/.npmrc",
+		"/extra/misc/Coding_Projects/web/applications/TL/.npmrc",
+		"/extra/misc/Coding_Projects/web/applications/TR/.gitignore",
+		"/extra/misc/Coding_Projects/web/applications/TL/package.json",
+		"/extra/misc/Coding_Projects/web/applications/TL/tsconfig.json",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/import_news.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/models/discovery.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/webpack.prod.config.js",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/discovery/structure_discovery.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/models/discovery_type.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/discovery/discovery.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/discovery/subject_discovery.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/test/server/discovery/shared_discovery_test.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/test/server/importing/importers_test.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/test/server/discovery/subject_test.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/test/server/discovery/structure_test.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/importing/importers/news_import.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/parsing/news_parser.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/entity/identifiable.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/settings/schema/identifiable.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/language/language.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/static/style.6beadb8bfe295595a21b.css",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/static/index.html",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/entity/news.py",
+		"/extra/misc/Coding_Projects/web/applications/TR/src/server/settings/schema/news.py"
+	],
+	"find":
+	{
+		"height": 46.0
+	},
+	"find_in_files":
+	{
+		"height": 94.0,
+		"where_history":
+		[
+			"/extra/misc/Coding_Projects/web/applications/TR/src/server/",
+			"/extra/misc/Coding_Projects/php/feedvisor",
+			"<open folders>",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"HttpErr",
+			"subjectNews",
+			"trans",
+			"transla",
+			"\",\n",
+			"SEGMENT",
+			"Language",
+			"self.translation",
+			"translation",
+			"_",
+			"Structure",
+			"tab",
+			"indentation",
+			"entry.published_parsed",
+			"1",
+			"SOURCE",
+			"ACTIVE",
+			"RATING",
+			"IDENTIFICA",
+			"DESCRIPTION",
+			"SUBJEC",
+			"print(",
+			"print",
+			"id",
+			"filename",
+			"default",
+			"OGG_BIT_RESERVOIR",
+			"OGG_MAX_HARD_BITRATE",
+			"OGG_MIN_HARD_BITRATE",
+			"OGG_AVG_BITRATE",
+			"OGG_MAX_BITRATE",
+			"OGG_MIN_BITRATE",
+			"ogge",
+			"HELP_MIMETYPE",
+			"$HELP_EXTENSION",
+			"BIT_RESERVOIR",
+			"MAX_HARD_BITRATE",
+			"MIN_HARD_BITRATE",
+			"AVG_BITRATE",
+			"MAX_BITRATE",
+			"MIN_BITRATE",
+			"#mainMenuButton",
+			"post",
+			"http",
+			"read",
+			"get_feed.php",
+			"get_feed",
+			"<?",
+			"get_feed",
+			"namespace",
+			"typesc",
+			"copyDa",
+			"async",
+			"init",
+			"max",
+			"line",
+			"config",
+			"logger",
+			"sinon",
+			"module",
+			"Eagerness",
+			"HttpResponseError",
+			"Error",
+			"trashT",
+			"tashTo",
+			"files",
+			"sut.config",
+			"indentation",
+			"torrentFilter",
+			"NoSec",
+			"string",
+			"finis",
+			"console",
+			"itemClick",
+			"Menu",
+			"Component",
+			"StatelessComponent",
+			"Stateless",
+			"login",
+			">\n",
+			"/icons",
+			"font-face",
+			"font",
+			"}),\n",
+			"icons",
+			"\n\t\t\t\t\t",
+			"ajax",
+			":]",
+			"width",
+			"u-pul",
+			"2",
+			"'",
+			"};\n",
+			"});\n",
+			"JSX",
+			"Component",
+			">",
+			"setResponseBody",
+			"bail: true",
+			"abort",
+			"loadstart",
+			"HttpRequest",
+			"this",
+			"recieve",
+			"supportsArrayBuffer",
+			"convertResponseBody",
+			"setResponseBody",
+			"setResponseHeaders",
+			"dispatchEvent",
+			"load",
+			"respond",
+			"setResponseBody",
+			"responseType",
+			"}\n",
+			"\t\t\n",
+			"InvalidFunctionError",
+			"fails",
+			"\n});",
+			"this",
+			"$method",
+			"();\n",
+			"'));",
+			">",
+			"handles",
+			"\n    "
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": true,
+		"regex": false,
+		"replace_history":
+		[
+			"news",
+			"language",
+			"_translation",
+			"self.translation",
+			"translation.gettext",
+			"t",
+			"BIT_RESERVOIR",
+			"MAX_HARD_BITRATE",
+			"MIN_HARD_BITRATE",
+			"AVG_BITRATE",
+			"MAX_BITRATE",
+			"MIN_BITRATE",
+			"HELP_OUTFORMAT",
+			"$HELP_MIMETYPE",
+			"OGG_BIT_RESERVOIR",
+			"OGG_MAX_HARD_BITRATE",
+			"OGG_MIN_HARD_BITRATE",
+			"OGG_AVG_BITRATE",
+			"OGG_MAX_BITRATE",
+			"OGG_MIN_BITRATE",
+			"Config",
+			"level",
+			"config_mock",
+			"\"",
+			"bail: bailOnFirstFail",
+			"do",
+			"TypeError"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "test/cookie-storage.spec.ts",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5916,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								364,
+								364
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "test/api-fallbacks.spec.ts",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2533,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1896,
+								1896
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
+							"translate_tabs_to_spaces": false,
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 648.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "test/stubs.ts",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2397,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								348,
+								348
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
+							"translate_tabs_to_spaces": false,
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 144.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 33.0
+	},
+	"input":
+	{
+		"height": 46.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.doc":
+	{
+		"height": 0.0
+	},
+	"output.errorlist":
+	{
+		"height": 152.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "browser-storage.sublime-project",
+	"replace":
+	{
+		"height": 74.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"langu",
+				"src/server/language/language.py"
+			],
+			[
+				"language",
+				"src/server/language/language.py"
+			],
+			[
+				"DOckerf",
+				"src/Dockerfile"
+			],
+			[
+				"da_DK",
+				"src/server/language/da_DK.py"
+			],
+			[
+				"da_D",
+				"src/server/language/da_DK.py"
+			],
+			[
+				"da_d",
+				"src/server/language/da_DK.py"
+			],
+			[
+				"struc",
+				"src/server/settings/schema/structure.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"/extra/misc/Coding_Projects/PHP/LANFlix/LANFlix.sublime-workspace"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 398.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 607.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 335.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

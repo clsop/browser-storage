@@ -1,3 +1,16 @@
-node_modules/
-**/*.js
-**/*~
+# build
+lib/
+
+# npm
+node_modules
+
+# pnpm
+.pnpm-store
+
+# test
+test/tmp
+coverage
+.nyc_output
+
+# sublime
+browser-storage.sublime-{project,workspace}

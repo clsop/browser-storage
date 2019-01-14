@@ -2,10 +2,10 @@
     "compilerOptions": {
         "target": "es5",
         "lib": ["dom", "es6"],
-        "declaration": true,
-        "declarationMap": true,
+        "declaration": false,
+        "declarationMap": false,
         "sourceMap": true,
-        "outDir": "./lib",
+        "outDir": "./test/tmp",
         "module": "commonjs",
         "moduleResolution": "node",
         "noImplicitAny": false,
@@ -22,7 +22,6 @@
         ]
     },
     "exclude": [
-    	"node_modules",
-        "test"
+        "node_modules"
     ]
 }

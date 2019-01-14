@@ -1,6 +1,6 @@
 import ApiObject from './api-object';
 
-import IndexedDBStorage from '../indexeddb-storage';
+import IndexedDBStorage from '../storage/indexeddb-storage';
 import LocalStorageApi from './local-storage-api';
 
 export default class SessionStorageApi extends ApiObject {
@@ -9,7 +9,7 @@ export default class SessionStorageApi extends ApiObject {
 	}
 
 	public use(): BrowserStorage.IBrowserStorage {
-		if (window.indexedDB !== undefined) {
+		if ("indexedDB" in window) {
 			return new IndexedDBStorage(window.indexedDB);
 		}
 

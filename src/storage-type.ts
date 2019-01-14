@@ -1,5 +1,5 @@
 export enum StorageType {
-	Cookie,
+	Cookie = 0,
 	Local,
 	Session,
 	IndexedDB

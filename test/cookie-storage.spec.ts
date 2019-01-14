@@ -1,111 +1,251 @@
-import { describe, it, before, beforeEach, afterEach } from 'mocha';
-import * as should from 'should';
+import 'should';
 import * as sinon from 'sinon';
+import { suite, test } from 'mocha-typescript';
 
-import { StorageType } from '../src/enums';
-import BrowserStorage from '../src/browser-storage';
-import KeyValueStorage from '../src/keyvalue-storage';
+import stubs from './stubs';
+import { StorageType } from '../src/storage-type';
+import { BrowserStorage } from '../src/browser-storage';
+import KeyValueStorage from '../src/storage/keyvalue-storage';
 
 describe('Cookie storage', () => {
-	let storage: BrowserStorage.IBrowserStorage;
-	let api: Test.Cookie;
 	const COOKIE_PART = "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
 
-	before(() => {
-		Object.defineProperty(global, "document", {
-			value: Object.create(null),
-			configurable: false,
-			writable: true,
-			enumerable: true
-		});
-		Object.defineProperty(document, "cookie", (() => {
-			let cookies: string[] = [];
+	@suite("cookie api tests")
+	class CookieApiTests {
+		public static before() {
+			stubs.defineDocument();
+		}
 
-			this.get = () => cookies.join("\r");
-			this.set = (value: string) => cookies.push(value);
-			this.configurable = false;
-    		this.enumerable = true;
+		public static after() {
+			stubs.undefineDocument();
+		}
 
-			api = {
-				get: sinon.stub(this, 'get'),
-				set: sinon.spy(this, 'set')
-			};
-			api.get.returns('');
+		public before() {
+			stubs.defineCookie();
+		}
 
-			return this;
-		})());
-		storage = BrowserStorage.getStorage(StorageType.Cookie);
-	});
+		public after() {
+			stubs.undefineCookie();
+		}
 
-	beforeEach(() => {
-		api.get.resetHistory();
-		api.set.resetHistory();
-	});
+		@test("can get storage api")
+		public canGetApi() {
+			// act
+			let storage = BrowserStorage.getStorage(StorageType.Cookie);
 
-	it('can get storage api', () => {
-		// act
-		let storage = BrowserStorage.getStorage(StorageType.Cookie);
-
-		// assert
-		storage.should.not.be.null();
-	});
-
-	it('can set a simple value', (done) => {
-		// arrange
-		let key = 'key';
-		let value = 'value';
-		api.get.returns(`${key}=${value}`);
-
-		storage.set<string>({ key: key, value: value }).then((data: BrowserStorage.KeyValueOrError<string>) => {
 			// assert
- 			api.set.calledOnce.should.be.true();
-			api.set.calledWith(`${data.key}=${JSON.stringify(data.value)}${COOKIE_PART}`).should.be.true();
+			storage.should.not.be.null();
+		}
+	}
 
-			done();
-		});
-	});
+	@suite("cookie set tests")
+	class CookieSetTests {
+		private static storage: BrowserStorage.IBrowserStorage;
+		private static cookieFakes: any;
 
-	it('can set simple values', (done) => {
-		// arrange
-		let keys = ['key1', 'key2'];
-		let values = ['value1', 'value2'];
-		api.get.returns(`${keys[0]}=${values[0]}`);
+		public static before() {
+			stubs.defineDocument();
+			CookieSetTests.cookieFakes = stubs.defineCookie();
+			CookieSetTests.storage = BrowserStorage.getStorage(StorageType.Cookie);
+		}
 
-		storage.set<string>([{ key: keys[0], value: values[0] }, { key: keys[1], value: values[1] }]).then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
-			// assert
- 			api.set.calledTwice.should.be.true();
-			api.set.calledWith(`${data[0].key}=${JSON.stringify(data[0].value)}${COOKIE_PART}`).should.be.true();
-			api.set.calledWith(`${data[1].key}=${JSON.stringify(data[1].value)}${COOKIE_PART}`).should.be.true();
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+		}
 
-			done();
-		});
-	});
+		public after() {
+			CookieSetTests.cookieFakes.getStub.resetHistory();
+			CookieSetTests.cookieFakes.setSpy.resetHistory();
+		}
 
-	it('can set a complex value');
+		@test("can set a simple value")
+		public canSetValue(done: MochaDone) {
+			// arrange
+			let key = 'key';
+			let value = 'value';
 
-	it('can set complex values');
+			// act
+			CookieSetTests.storage.set<string>({ key: key, value: value })
+				.then((data: BrowserStorage.KeyValueOrError<string>) => {
+				// assert
+				CookieSetTests.cookieFakes.setSpy.calledOnce.should.be.true();
+				CookieSetTests.cookieFakes.setSpy
+					.calledWithExactly(`${data.key}=${JSON.stringify(data.value)}${COOKIE_PART}`)
+					.should.be.true();
 
-	it('will fail to set a value');
+				done();
+			});
+		}
 
-	it('will fail to set some values');
+		@test("can set a simple values")
+		public canSetValues(done: MochaDone) {
+			// arrange
+			let keys = ['key1', 'key2'];
+			let values = ['value1', 'value2'];
 
-	it('can get a simple value');
+			// act
+			CookieSetTests.storage.set<string>([{ key: keys[0], value: values[0] }, { key: keys[1], value: values[1] }])
+				.then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
+				// assert
+				CookieSetTests.cookieFakes.setSpy.calledTwice.should.be.true();
+				CookieSetTests.cookieFakes.setSpy
+					.calledWithExactly(`${data[0].key}=${JSON.stringify(data[0].value)}${COOKIE_PART}`)
+					.should.be.true();
+				CookieSetTests.cookieFakes.setSpy
+					.calledWithExactly(`${data[1].key}=${JSON.stringify(data[1].value)}${COOKIE_PART}`)
+					.should.be.true();
 
-	it('can get simple values');
+				done();
+			});
+		}
 
-	it('can get a complex value');
+		@test("can set a complex value")
+		public canSetComplexValue(done: MochaDone) {
+			// arrange
+			let key = 'key';
+			let value = { test: "test", num: 2, decimal: 23.45 };
 
-	it('can get complex values');
+			// act
+			CookieSetTests.storage.set<{ test: string, num: number, decimal: number }>({ key: key, value: value })
+				.then((data: BrowserStorage.KeyValueOrError<{ test: string, num: number, decimal: number }>) => {
+				// assert
+				CookieSetTests.cookieFakes.setSpy.calledOnce.should.be.true();
+				CookieSetTests.cookieFakes.setSpy
+					.calledWithExactly(`${key}=${JSON.stringify(value)}${COOKIE_PART}`)
+					.should.be.true();
 
-	it('will fail to get a value');
+				done();
+			});
+		}
 
-	it('will fail to get some values');
+		//@test("can set a complex values")
+		@test.skip()
+		public canSetComplexValues(done: MochaDone) {
+		}
 
-	it('can remove a value');
+		//@test("will fail to set a value")
+		@test.skip()
+		public willFailSetValue(done: MochaDone) {
+		}
 
-	it('will fail to remove values');
+		//@test("will fail to set some values")
+		@test.skip()
+		public willFailSetValues(done: MochaDone) {
+		}
+	}
 
-	it('can clear the storage');
+	@suite("cookie get tests")
+	class CookieGetTests {
+		private static storage: BrowserStorage.IBrowserStorage;
 
-	it('will fail to clear the storage');
+		public static before() {
+			stubs.defineDocument();
+			stubs.defineCookie();
+			CookieGetTests.storage = BrowserStorage.getStorage(StorageType.Cookie);
+		}
+
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+		}
+
+		public before() {
+		}
+
+		public after() {
+		}
+
+		//@test("can get a simple value")
+		@test.skip()
+		public canGetValue(done: MochaDone) {
+		}
+
+		//@test("can get simple values")
+		@test.skip()
+		public canGetValues(done: MochaDone) {
+		}
+
+		//@test("can get a complex value")
+		@test.skip()
+		public canGetComplexValue(done: MochaDone) {
+		}
+
+		//@test("can get complex values")
+		@test.skip()
+		public canGetComplexValues(done: MochaDone) {
+		}
+
+		//@test("will fail to get a value")
+		@test.skip()
+		public willFailGetValue(done: MochaDone) {
+		}
+
+		//@test("will fail to get some values")
+		@test.skip()
+		public willFailGetComplexValues(done: MochaDone) {
+		}
+	}
+
+	@suite("cookie remove tests")
+	class CookieRemoveTests {
+		private static storage: BrowserStorage.IBrowserStorage;
+
+		public static before() {
+			stubs.defineDocument();
+			stubs.defineCookie();
+			CookieRemoveTests.storage = BrowserStorage.getStorage(StorageType.Cookie);
+		}
+
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+		}
+
+		//@test("can remove a value")
+		@test.skip()
+		public canRemoveValue(done: MochaDone) {
+		}
+
+		//@test("can remove some values")
+		@test.skip()
+		public canRemoveValues(done: MochaDone) {
+		}
+
+		//@test("will fail to remove value")
+		@test.skip()
+		public willFailRemoveValue(done: MochaDone) {
+		}
+
+		//@test("will fail to remove values")
+		@test.skip()
+		public willFailRemoveValues(done: MochaDone) {
+		}
+	}
+
+	@suite("cookie clear tests")
+	class CookieClearTests {
+		private static storage: BrowserStorage.IBrowserStorage;
+
+		public static before() {
+			stubs.defineDocument();
+			stubs.defineCookie();
+			CookieClearTests.storage = BrowserStorage.getStorage(StorageType.Cookie);
+		}
+
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+		}
+
+		//@test("can clear the storage")
+		@test.skip()
+		public canClear(done: MochaDone) {
+		}
+
+		//@test("will fail to clear the storage")
+		@test.skip()
+		public willFailClear(done: MochaDone) {
+		}
+	}
 });

@@ -1,63 +1,203 @@
-import { describe, it, before, beforeEach } from 'mocha';
-import * as should from 'should';
+import 'should';
+import { describe } from 'mocha';
 
-import { StorageType } from '../src/enums';
-import BrowserStorage from '../src/browser-storage';
-import KeyValueStorage from '../src/keyvalue-storage';
+import stubs from './stubs';
+import { StorageType } from '../src/storage-type';
+import { BrowserStorage } from '../src/browser-storage';
+import KeyValueStorage from '../src/storage/keyvalue-storage';
 
 describe('IndexedDB storage', () => {
-	let storage: BrowserStorage.IBrowserStorage;
+	@suite("indexedDB api tests")
+	class IndexedDbApiTests {
+		public static before() {
+			stubs.defineWindow();
+		}
 
-	before(() => {
-		Object.defineProperty(global.window, 'indexedDB', {
-			value: Object.create(null),
-			configurable: false,
-			enumerable: true,
-			writable: false
-		});
+		public static after() {
+			stubs.undefineWindow();
+		}
 
-		// TODO: set stubs
-		
-		storage = BrowserStorage.getStorage(StorageType.IndexedDB);
-	});
+		public before() {
+			stubs.defineIndexedDb();
+		}
 
-	it('can get storage api', () => {
-		// act
-		let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
+		public after() {
+			stubs.undefineIndexedDb();
+		}
 
-		// assert
-		storage.should.not.be.null();
-	});
+		@test("can get storage api")
+		public canGetApi() {
+			// act
+			let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
 
-	it('can set a simple value');
+			// assert
+			storage.should.not.be.null();
+		}
+	}
 
-	it('can set simple values');
+	@suite("indexedDB set tests")
+	class IndexedDbSetTests {
+		public static before() {
+			stubs.defineWindow();
+		}
 
-	it('can set a complex value');
+		public static after() {
+			stubs.undefineWindow();
+		}
 
-	it('can set complex values');
+		public before() {
+			stubs.defineIndexedDb();
+		}
 
-	it('will fail to set a value');
+		public after() {
+			stubs.undefineIndexedDb();
+		}
 
-	it('will fail to set some values');
+		//@test("can set a simple value")
+		@test.skip()
+		public canSetValue() {
+		}
 
-	it('can get a simple value');
+		//@test("can set simple values")
+		@test.skip()
+		public canSetValues() {
+		}
 
-	it('can get simple values');
+		//@test("can set a complex value")
+		@test.skip()
+		public canSetComplexValue() {
+		}
 
-	it('can get a complex value');
+		//@test("can set complex values")
+		@test.skip()
+		public canSetComplexValues() {
+		}
 
-	it('can get complex values');
+		//@test("will fail to set a value")
+		@test.skip()
+		public willFailSetValue() {
+		}
 
-	it('will fail to get a value');
+		//@test("will fail to set some values")
+		@test.skip()
+		public willFailSetValues() {
+		}
+	}
 
-	it('will fail to get some values');
+	@suite("indexedDB get tests")
+	class IndexedDbGetTests {
+		public static before() {
+			stubs.defineWindow();
+		}
 
-	it('can remove a value');
+		public static after() {
+			stubs.undefineWindow();
+		}
 
-	it('will fail to remove values');
+		public before() {
+			stubs.defineIndexedDb();
+		}
 
-	it('can clear the storage');
+		public after() {
+			stubs.undefineIndexedDb();
+		}
 
-	it('will fail to clear the storage');
+		//@test("can get a simple value")
+		@test.skip()
+		public canGetValue() {
+		}
+
+		//@test("can get simple values")
+		@test.skip()
+		public canGetValues() {
+		}
+
+		//@test("can get a complex value")
+		@test.skip()
+		public canGetComplexValue() {
+		}
+
+		//@test("can get complex values")
+		@test.skip()
+		public canGetComplexValues() {
+		}
+
+		//@test("will fail to get a value")
+		@test.skip()
+		public willFailGetValue() {
+		}
+
+		//@test("will fail to get some values")
+		@test.skip()
+		public willFailGetValues() {
+		}
+	}
+
+	@suite("indexedDB remove tests")
+	class IndexedDbRemoveTests {
+		public static before() {
+			stubs.defineWindow();
+		}
+
+		public static after() {
+			stubs.undefineWindow();
+		}
+
+		public before() {
+			stubs.defineIndexedDb();
+		}
+
+		public after() {
+			stubs.undefineIndexedDb();
+		}
+
+		//@test("can remove a value")
+		@test.skip()
+		public canRemoveValue() {
+		}
+
+		//@test("can remove values")
+		@test.skip()
+		public canRemoveValues() {
+		}
+
+		//@test("will fail to remove value")
+		@test.skip()
+		public willFailRemoveValue() {
+		}
+
+		//@test("will fail to remove values")
+		@test.skip()
+		public willFailRemoveValues() {
+		}
+	}
+
+	@suite("indexedDB clear tests")
+	class IndexedDbClearTests {
+		public static before() {
+			stubs.defineWindow();
+		}
+
+		public static after() {
+			stubs.undefineWindow();
+		}
+
+		public before() {
+			stubs.defineIndexedDb();
+		}
+
+		public after() {
+			stubs.undefineIndexedDb();
+		}
+
+		//@test("can clear the storage")
+		@test.skip()
+		public canClear() {
+		}
+
+		//@test("will fail to clear the storage")
+		@test.skip()
+		public wilFailClear() {
+		}
+	}
 });

@@ -1,5 +1,5 @@
 import BaseStorage from './base-storage';
-import { StorageType } from './enums';
+import { StorageType } from '../storage-type';
 
 export default class KeyValueStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
 	private readonly storage: Storage;
@@ -41,7 +41,7 @@ export default class KeyValueStorage extends BaseStorage implements BrowserStora
 							errors.push({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" was not found!` });
 						}
 					}
-					
+
 					// all keys was missing
 					if (errors.length === keys.length) {
 						reject(errors);
@@ -53,7 +53,7 @@ export default class KeyValueStorage extends BaseStorage implements BrowserStora
 					}
 				}, (key: string) => {
 					let value: V = this.parseValue<V>(this.storage.getItem(key));
-					
+
 					if (value !== null) {
 						resolve({ key: key, value: value });
 					} else {
@@ -69,18 +69,38 @@ export default class KeyValueStorage extends BaseStorage implements BrowserStora
 				reject: (reason?: any) => void) => {
 				this.asArray<BrowserStorage.KeyValue<V>>(data, (data: Array<BrowserStorage.KeyValue<V>>) => {
 					let values: Array<BrowserStorage.KeyValueOrError<V>> = [];
+					let errors: Array<BrowserStorage.KeyValueOrError<V>> = [];
 
 					for (let index in data) {
 						let key = data[index].key;
-						let value = data[index].value;
+						let value = typeof data[index].value !== "string" ?
+							JSON.stringify(data[index].value) : <string>data[index].value;
 
-						this.storage.setItem(key, JSON.stringify(value));
-						values.push({ key: key, value: value });
+						try {
+							this.storage.setItem(key, value);
+							values.push({ key: key, value: data[index].value });
+						} catch (ex) {
+							errors.push({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" could not be set!` });
+						}
 					}
-					
-					resolve(values);
+
+					// all keys failed to be set
+					if (errors.length === data.length) {
+						reject(errors);
+					} else if (errors.length > 0) {
+						values.push(...errors);
+						resolve(values);
+					} else {
+						resolve(values);
+					}
 				}, (data: BrowserStorage.KeyValueOrError<V>) => {
-					this.storage.setItem(data.key, JSON.stringify(data.value));
+					try {
+						let value = typeof data.value !== "string" ?
+							JSON.stringify(data.value) : <string>data.value;
+						this.storage.setItem(data.key, value);
+					} catch (ex) {
+						reject({ key: data.key, error: `${StorageType[this.storageType]} storage: value with key "${data.key}" could not be set!` });
+					}
 
 					resolve({ key: data.key, value: data.value });
 				});
@@ -88,7 +108,7 @@ export default class KeyValueStorage extends BaseStorage implements BrowserStora
 	}
 
 	public count(): Promise<BrowserStorage.ValueOrError<number>> {
-		return new Promise <BrowserStorage.ValueOrError<number>> (
+		return new Promise<BrowserStorage.ValueOrError<number>>(
 			(resolve: (value?: BrowserStorage.ValueOrError<number>) => void, reject: (reason?: any) => void) => {
 				resolve({ value: this.storage.length });
 			});
@@ -129,7 +149,7 @@ export default class KeyValueStorage extends BaseStorage implements BrowserStora
 					} else {
 						reject({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" could not be removed!` });
 					}
-					
+
 				});
 			});
 	}

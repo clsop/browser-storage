@@ -1,4 +1,4 @@
-import { StorageType } from './enums';
+import { StorageType } from './storage-type';
 
 import ApiObject from './api/api-object';
 import CookieStorageApi from './api/cookie-storage-api';
@@ -6,7 +6,7 @@ import LocalStorageApi from './api/local-storage-api';
 import SessionStorageApi from './api/session-storage-api';
 import IndexedDBStorageApi from './api/indexeddb-storage-api';
 
-export default class BrowserStorage {
+export class BrowserStorage {
 	public static getStorage(type: StorageType = StorageType.Local): BrowserStorage.IBrowserStorage {
 		let apiObject: ApiObject = null;
 

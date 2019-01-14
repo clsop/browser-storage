@@ -1,4 +1,4 @@
-import { StorageType } from './enums';
+import { StorageType } from '../storage-type';
 
 export default abstract class BaseStorage {
 	protected storageType: StorageType;

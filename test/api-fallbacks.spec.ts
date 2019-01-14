@@ -1,120 +1,110 @@
-import { describe, it, before } from 'mocha';
-import * as sinon from 'sinon';
+import 'should';
+import { describe } from 'mocha';
+import { suite, test } from 'mocha-typescript';
 
-import BrowserStorage from '../src/browser-storage';
-import CookieStorage from '../src/cookie-storage';
-import KeyValueStorage from '../src/keyvalue-storage';
+import stubs from './stubs';
+import { BrowserStorage } from '../src/browser-storage';
+import CookieStorage from '../src/storage/cookie-storage';
+import KeyValueStorage from '../src/storage/keyvalue-storage';
+import IndexedDbStorage from '../src/storage/indexeddb-storage';
 
-import { StorageType } from '../src/enums';
+import { StorageType } from '../src/storage-type';
 
 describe('Api fallbacks', () => {
-	let defineCookie = () => {
-		Object.defineProperty(document, 'cookie', {
-			value: "",
-			configurable: true
-		});
-	};
-	let defineLocal = () => {
-		Object.defineProperty(global.window, 'localStorage', {
-			value: Object.create(null),
-			configurable: true,
-			enumerable: true,
-			writable: true
-		});
-		Object.defineProperties(global.window.localStorage, {
-			'getItem': {
-				value: () => { },
-				configurable: true,
-				enumerable: true,
-				writable: false
-			},
-			'setItem': {
-				value: () => { },
-				configurable: true,
-				enumerable: true,
-				writable: false
-			},
-			'removeItem': {
-				value: () => { },
-				configurable: true,
-				enumerable: true,
-				writable: false
-			},
-			'clear': {
-				value: () => { },
-				configurable: true,
-				enumerable: true,
-				writable: false
-			}
-		});
-	};
+	@suite("local storage api tests")
+	class LocalStorageApiTests {
+		public static before() {
+			stubs.defineWindow();
+			stubs.defineDocument();
+			stubs.defineCookie();
+		}
 
-	let removeCookie = () => {
-		delete global.document.cookie;
-	};
-	let removeLocal = () => {
-		delete global.window.localStorage;
-	};
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+			stubs.undefineWindow();
+		}
 
-	before(() => {
-		Object.defineProperty(global, 'window', {
-			value: Object.create(null),
-			configurable: false,
-			enumerable: true,
-			writable: false
-		});
-		Object.defineProperty(global, 'document', {
-			value: Object.create(null),
-			configurable: true,
-			enumerable: true,
-			writable: true
-		});
-	});
+		@test("localStorage fallback to cookie")
+		public localStorageToCookie() {
+			// act
+			let storage = BrowserStorage.getStorage(StorageType.Local);
 
-	it('localStorage to cookie', () => {
-		// arrange
-		defineCookie();
+			// assert
+			storage.should.be.instanceof(CookieStorage);
+		}
+	}
 
-		// act
-		let storage = BrowserStorage.getStorage(StorageType.Local);
+	@suite("session storage api tests")
+	class SessionStorageApiTests {
+		public static before() {
+			stubs.defineWindow();
+			stubs.defineDocument();
+			stubs.defineCookie();
+		}
 
-		// assert
-		storage.should.be.instanceof(CookieStorage);
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+			stubs.undefineWindow();
+		}
 
-		removeCookie();
-	});
+		@test("sessionStorage fallback to cookie")
+		public sessionStorageToCookie() {
+			// act
+			let storage = BrowserStorage.getStorage(StorageType.Session);
 
-	it('sessionStorage to cookie', () => {
-		// arrange
-		defineCookie();
+			// assert
+			storage.should.be.instanceof(CookieStorage);
+		}
+	}
 
-		// act
-		let storage = BrowserStorage.getStorage(StorageType.Session);
+	@suite("indexedDb storage api tests")
+	class IndexedDbStorageApiTests {
+		public static before() {
+			stubs.defineWindow();
+			stubs.defineDocument();
+			stubs.defineStorage();
+		}
 
-		// assert
-		storage.should.be.instanceof(CookieStorage);
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+			stubs.undefineStorage();
+		}
 
-		removeCookie();
-	});
+		@test("indexedDb fallback to localStorage")
+		public IndexDbStorageToLocalStorage() {
+			// act
+			let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
 
-	it('indexedDB to localStorage', () => {
-		// arrange
-		defineLocal();
+			// assert
+			// TODO: check keyvaluestorage type
+			storage.should.be.instanceof(KeyValueStorage);
+		}
+	}
 
-		// act
-		let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
+	@suite("cookie storage api tests")
+	class CookieStorageApiTests {
+		public static before() {
+			stubs.defineWindow();
+			stubs.defineDocument();
+		}
 
-		// assert
-		// TODO: check keyvaluestorage type
-		storage.should.be.instanceof(KeyValueStorage);
+		public static after() {
+			stubs.undefineCookie();
+			stubs.undefineDocument();
+		}
 
-		removeLocal();
-	});
+		@test("cookie fallback to error")
+		public CookieStorageToError() {
+			// arrange
+			let expectation = () => {
+				BrowserStorage.getStorage(StorageType.Cookie);
+			};
 
-	it('cookie to none', () => {
-		// act, assert
-		should.throws(() => {
-			BrowserStorage.getStorage(StorageType.Cookie);
-		});
-	});
+			// act, assert
+			expectation.should.throw(Error);
+		}
+	}
 });

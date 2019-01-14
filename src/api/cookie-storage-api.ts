@@ -1,6 +1,7 @@
 import ApiObject from './api-object';
+import BrowserApiError from '../exceptions/browser-api-error';
 
-import CookieStorage from '../cookie-storage';
+import CookieStorage from '../storage/cookie-storage';
 
 export default class CookieStorageApi extends ApiObject {
 	constructor() {
@@ -8,10 +9,10 @@ export default class CookieStorageApi extends ApiObject {
 	}
 
 	public use(): BrowserStorage.IBrowserStorage {
-		if (document.cookie !== undefined) {
+		if ("cookie" in document) {
 			return new CookieStorage();
 		}
 
-		throw "no browser storage api available!";
+		throw new BrowserApiError("no browser storage api available!");
 	}
 }
