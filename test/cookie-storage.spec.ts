@@ -119,9 +119,28 @@ describe('Cookie storage', () => {
 			});
 		}
 
-		//@test("can set a complex values")
-		@test.skip()
+		@test("can set complex values")
 		public canSetComplexValues(done: MochaDone) {
+			// arrange
+			let data = [{
+				key: "key1", value: { ping: { on: false, time: 2 }, clock: { hour: 1, minute: 22, sec: 55 } }
+			}, {
+				key: "key2", value: { ping: { on: true, time: 3 }, clock: { hour: 3, minute: 2, sec: 34 } }
+			}];
+
+			// act
+			CookieSetTests.storage.set<{ ping: { on: boolean, time: number }, clock: { hour: number, minute: number, sec: number } }>(data)
+				.then((setData: Array<BrowserStorage.KeyValueOrError<{ ping: { on: boolean, time: number }, clock: { hour: number, minute: number, sec: number } }>>) => {
+					// assert
+					CookieSetTests.cookieFakes.setSpy.calledTwice.should.be.true();
+					CookieSetTests.cookieFakes.setSpy
+						.calledWithExactly(`${data[0].key}=${JSON.stringify(data[0].value)}${COOKIE_PART}`)
+						.should.be.true();
+					CookieSetTests.cookieFakes.setSpy
+						.calledWithExactly(`${data[1].key}=${JSON.stringify(data[1].value)}${COOKIE_PART}`)
+						.should.be.true();
+					done();
+				});
 		}
 
 		//@test("will fail to set a value")

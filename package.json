@@ -1,6 +1,6 @@
 {
   "name": "@shanknet/browser-storage",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Api wrapper for different browser storage apis with fallbacks.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -28,12 +28,11 @@
     "instrument": true
   },
   "scripts": {
-    "build": "rm -rf lib/ && tsc",
-    "pretest": "rm -rf test/tmp && tsc --build tsconfig-test.json",
+    "build": "tsc --build tsconfig.build.json",
+    "pretest": "tsc",
     "test": "nyc mocha"
   },
   "devDependencies": {
-    "@shanknet-types/browser-storage": "^0.0.1",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.1.2",
     "@types/sinon": "^7.0.3",

@@ -73,15 +73,15 @@ describe('Api fallbacks', () => {
 			stubs.undefineStorage();
 		}
 
-		@test("indexedDb fallback to localStorage")
-		public IndexDbStorageToLocalStorage() {
-			// act
-			let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
+		// @test("indexedDb fallback to localStorage")
+		// public IndexDbStorageToLocalStorage() {
+		// 	// act
+		// 	let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
 
-			// assert
-			// TODO: check keyvaluestorage type
-			storage.should.be.instanceof(KeyValueStorage);
-		}
+		// 	// assert
+		// 	// TODO: check keyvaluestorage type
+		// 	storage.should.be.instanceof(KeyValueStorage);
+		// }
 	}
 
 	@suite("cookie storage api tests")

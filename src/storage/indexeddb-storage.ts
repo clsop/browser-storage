@@ -2,12 +2,8 @@ import BaseStorage from './base-storage';
 import { StorageType } from '../storage-type';
 
 export default class IndexedDBStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
-	private indexedDB: IDBFactory;
-
-	constructor(indexedDB: IDBFactory) {
+	constructor(private readonly indexedDB: IDBFactory) {
 		super(StorageType.IndexedDB);
-
-		this.indexedDB = indexedDB;
 	}
 
 	public get<V extends Object | number | string>(key: string | Array<string>): Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>> {

@@ -2,10 +2,10 @@
     "compilerOptions": {
         "target": "es5",
         "lib": ["dom", "es6"],
-        "declaration": false,
-        "declarationMap": false,
+        "declaration": true,
+        "declarationMap": true,
         "sourceMap": true,
-        "outDir": "./test/tmp",
+        "outDir": "./lib",
         "module": "commonjs",
         "moduleResolution": "node",
         "noImplicitAny": false,
@@ -18,10 +18,12 @@
         "strict": false,
         "typeRoots": [
             "node_modules/@types",
-            "node_modules/@shanknet-types"
+            "./src/typings"
         ]
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "lib",
+        "test"
     ]
 }

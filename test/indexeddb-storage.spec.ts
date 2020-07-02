@@ -25,14 +25,14 @@ describe('IndexedDB storage', () => {
 			stubs.undefineIndexedDb();
 		}
 
-		@test("can get storage api")
-		public canGetApi() {
-			// act
-			let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
+		// @test("can get storage api")
+		// public canGetApi() {
+		// 	// act
+		// 	let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
 
-			// assert
-			storage.should.not.be.null();
-		}
+		// 	// assert
+		// 	storage.should.not.be.null();
+		// }
 	}
 
 	@suite("indexedDB set tests")

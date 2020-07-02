@@ -78,7 +78,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			let setSpy = sinon.spy(window.localStorage, "setItem");
 
 			// act
-			this.storage.set<string>({ key: key, value: value }).then((data: BrowserStorage.KeyValue<string>) => {
+			this.storage.set<string>({ key: key, value: value }).then((data: BrowserStorage.KeyValueOrError<string>) => {
 				// assert
 				setSpy.calledOnce.should.be.true();
 				setSpy.calledWith(key, value).should.be.true();
@@ -90,12 +90,12 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 		public canSetValues(done: MochaDone) {
 			// arrange
 			let data = [{ key: 'test', value: 1 },
-				{ key: 'test2', value: 2 },
-				{ key: 'test3', value: 3 }];
+			{ key: 'test2', value: 2 },
+			{ key: 'test3', value: 3 }];
 			let setSpy = sinon.spy(window.localStorage, "setItem");
 
 			// act
-			this.storage.set<number>(data).then((values: Array<BrowserStorage.KeyValue<number>>) => {
+			this.storage.set<number>(data).then((values: Array<BrowserStorage.KeyValueOrError<number>>) => {
 				// assert
 				setSpy.calledThrice.should.be.true();
 				setSpy.calledWith(data[0].key, data[0].value.toString()).should.be.true();
@@ -118,7 +118,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			// act
 			this.storage.set<{ value1: number, value2: string, value3: Array<number> }>(
 				{ key: "test", value: value })
-				.then((data: BrowserStorage.KeyValue<{ value1: number, value2: string, value3: Array<number> }>) => {
+				.then((data: BrowserStorage.KeyValueOrError<{ value1: number, value2: string, value3: Array<number> }>) => {
 					// assert
 					setSpy.calledOnce.should.be.true();
 					setSpy.calledWith(data.key, JSON.stringify(data.value)).should.be.true();
@@ -154,7 +154,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			}, {
 				key: "test3",
 				value: values[2]
-			}]).then((data: Array<BrowserStorage.KeyValue<{ value1: number, value2: string, value3: Array<number> }>>) => {
+			}]).then((data: Array<BrowserStorage.KeyValueOrError<{ value1: number, value2: string, value3: Array<number> }>>) => {
 				// assert
 				setSpy.calledThrice.should.be.true();
 				setSpy.calledWith(data[0].key, JSON.stringify(data[0].value)).should.be.true();
@@ -164,14 +164,52 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			});
 		}
 
-		//@test("will fail to set a value")
-		@test.skip()
+		@test("will fail to set a value")
 		public willFailSetValue(done: MochaDone) {
+			// arrange
+			let key = "key";
+			let value = "value";
+			let setMock = sinon.mock(window.localStorage);
+			setMock.expects("setItem").throws("Error");
+
+			// act
+			this.storage.set<string>({ key: key, value: value }).catch((reason: BrowserStorage.KeyValueOrError<string>) => {
+				// assert
+				reason.key.should.equal(key);
+				reason.error.should.not.be.empty();
+				done();
+			});
+
+			// assert
+			setMock.verify();
 		}
 
-		//@test("will fail to set some values")
-		@test.skip()
+		@test("will fail to set some values")
+		//@test.skip()
 		public willFailSetValues(done: MochaDone) {
+			// arrange
+			let data = [{
+				key: "key1", value: "value1"
+			}, {
+				key: "key2", value: "value2"
+			}, {
+				key: "key3", value: "value3"
+			}];
+			let setStub = sinon.stub(window.localStorage, "setItem");
+			setStub.withArgs(data[1].key, data[1].value).throws("Error");
+
+			// act
+			this.storage.set<string>(data).then((setData: Array<BrowserStorage.KeyValueOrError<string>>) => {
+				// assert
+				setStub.calledThrice.should.be.true();
+				setData[0].key.should.equal(data[0].key);
+				setData[0].value.should.equal(data[0].value);
+				setData[1].key.should.equal(data[2].key);
+				setData[1].value.should.equal(data[2].value);
+				setData[2].key.should.equal(data[1].key);
+				setData[2].error.should.not.be.empty();
+				done();
+			});
 		}
 	}
 
@@ -204,7 +242,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			let getStub = sinon.stub(window.localStorage, "getItem").withArgs(key).returns(value);
 
 			// act
-			this.storage.get<string>(key).then((data: BrowserStorage.KeyValue<string>) => {
+			this.storage.get<string>(key).then((data: BrowserStorage.KeyValueOrError<string>) => {
 				// assert
 				getStub.calledOnce.should.be.true();
 				getStub.calledWith(key).should.be.true();
@@ -226,7 +264,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			getStub.withArgs(keys[3]).returns(values[3]);
 
 			// act
-			this.storage.get<string>(keys).then((data: Array<BrowserStorage.KeyValue<string>>) => {
+			this.storage.get<string>(keys).then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
 				// assert
 				getStub.callCount.should.be.exactly(4);
 				getStub.calledWith(keys[0]).should.be.true();
@@ -259,7 +297,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 			// act
 			this.storage.get<{ prop1: number, prop2: string, prop3: Object, prop4: Array<any> }>(key)
-				.then((data: BrowserStorage.KeyValue<{ prop1: number, prop2: string, prop3: Object, prop4: Array<any> }>) => {
+				.then((data: BrowserStorage.KeyValueOrError<{ prop1: number, prop2: string, prop3: Object, prop4: Array<any> }>) => {
 					// assert
 					getStub.calledOnce.should.be.true();
 					getStub.calledWith(key).should.be.true();
@@ -294,7 +332,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 			// act
 			this.storage.get<{ prop1: number, prop2: string }>(keys)
-				.then((data: Array<BrowserStorage.KeyValue<{ prop1: number, prop2: string }>>) => {
+				.then((data: Array<BrowserStorage.KeyValueOrError<{ prop1: number, prop2: string }>>) => {
 					// assert
 					getStub.calledThrice.should.be.true();
 					getStub.calledWith(keys[0]).should.be.true();

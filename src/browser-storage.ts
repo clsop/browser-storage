@@ -14,7 +14,7 @@ export class BrowserStorage {
 			case StorageType.Local: apiObject = new LocalStorageApi(); break;
 			case StorageType.Session: apiObject = new SessionStorageApi(); break;
 			case StorageType.Cookie: apiObject = new CookieStorageApi(); break;
-			case StorageType.IndexedDB: apiObject = new IndexedDBStorageApi(); break;
+			//case StorageType.IndexedDB: apiObject = new IndexedDBStorageApi(); break;
 			default: apiObject = new LocalStorageApi(); break;
 		}
 
