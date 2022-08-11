@@ -1,6 +1,6 @@
 import 'should';
 import * as sinon from 'sinon';
-import { describe } from 'mocha';
+import { describe, before, beforeEach, after, afterEach } from 'mocha';
 
 import stubs from './stubs';
 import { StorageType } from '../src/storage-type';
@@ -9,26 +9,24 @@ import KeyValueStorage from '../src/storage/keyvalue-storage';
 
 // session and local storage has similar api
 describe('KeyValue storage (localStorage and sessionStorage)', () => {
-	@suite("key/value api tests")
-	class KeyValueApiTests {
-		public static before() {
+	describe("key/value api tests", () => {
+		before(() => {
 			stubs.defineWindow();
-		}
+		});
 
-		public static after() {
+		after(() => {
 			stubs.undefineWindow();
-		}
+		});
 
-		public before() {
+		beforeEach(() => {
 			stubs.defineStorage();
-		}
+		});
 
-		public after() {
+		afterEach(() => {
 			stubs.undefineStorage();
-		}
+		});
 
-		@test("can get storage api")
-		public canGetApi() {
+		it("can get storage api", () => {
 			// act
 			let localStorage = BrowserStorage.getStorage(StorageType.Local);
 			let sessionStorage = BrowserStorage.getStorage(StorageType.Session);
@@ -36,58 +34,54 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			// assert
 			localStorage.should.not.be.null();
 			sessionStorage.should.not.be.null();
-		}
+		});
 
-		@test("uses localstorage as default")
-		public useLocalStorageDefault() {
+		it("uses localstorage as default", () => {
 			// arrange
 			let storage = BrowserStorage.getStorage();
 
 			// assert
 			storage.should.not.be.null();
 			storage.should.be.instanceof(KeyValueStorage);
-		}
-	}
+		});
+	});
 
-	@suite("key/value set tests")
-	class KeyValueSetTests {
-		private storage: BrowserStorage.IBrowserStorage;
+	describe("key/value set tests", () => {
+		let storage: BrowserStorage.IBrowserStorage;
 
-		public static before() {
+		before(() => {
 			stubs.defineWindow();
-		}
+		});
 
-		public static after() {
+		after(() => {
 			stubs.undefineWindow();
-		}
+		});
 
-		public before() {
+		beforeEach(() => {
 			stubs.defineStorage();
-			this.storage = BrowserStorage.getStorage(StorageType.Local);
-		}
+			storage = BrowserStorage.getStorage(StorageType.Local);
+		});
 
-		public after() {
+		afterEach(() => {
 			stubs.undefineStorage();
-		}
+		});
 
-		@test("can set a simple value")
-		public canSetValue(done: MochaDone) {
+		it("can set a simple value", (done: Mocha.Done) => {
 			// arrange
 			let key = "key";
 			let value = "value";
 			let setSpy = sinon.spy(window.localStorage, "setItem");
 
 			// act
-			this.storage.set<string>({ key: key, value: value }).then((data: BrowserStorage.KeyValueOrError<string>) => {
+			storage.set<string>({ key: key, value: value }).then((data: BrowserStorage.KeyValueOrError<string>) => {
 				// assert
 				setSpy.calledOnce.should.be.true();
 				setSpy.calledWith(key, value).should.be.true();
 				done();
 			});
-		}
+		});
 
-		@test("can set simple values")
-		public canSetValues(done: MochaDone) {
+		it("can set simple values", (done: Mocha.Done) => {
 			// arrange
 			let data = [{ key: 'test', value: 1 },
 			{ key: 'test2', value: 2 },
@@ -95,7 +89,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			let setSpy = sinon.spy(window.localStorage, "setItem");
 
 			// act
-			this.storage.set<number>(data).then((values: Array<BrowserStorage.KeyValueOrError<number>>) => {
+			storage.set<number>(data).then((values: Array<BrowserStorage.KeyValueOrError<number>>) => {
 				// assert
 				setSpy.calledThrice.should.be.true();
 				setSpy.calledWith(data[0].key, data[0].value.toString()).should.be.true();
@@ -103,10 +97,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				setSpy.calledWith(data[2].key, data[2].value.toString()).should.be.true();
 				done();
 			});
-		}
+		});
 
-		@test("can set a complex value")
-		public canSetComplexValue(done: MochaDone) {
+		it("can set a complex value", (done: Mocha.Done) => {
 			// arrange
 			let value: { value1: number, value2: string, value3: Array<number> } = {
 				value1: 1,
@@ -116,7 +109,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			let setSpy = sinon.spy(window.localStorage, "setItem");
 
 			// act
-			this.storage.set<{ value1: number, value2: string, value3: Array<number> }>(
+			storage.set<{ value1: number, value2: string, value3: Array<number> }>(
 				{ key: "test", value: value })
 				.then((data: BrowserStorage.KeyValueOrError<{ value1: number, value2: string, value3: Array<number> }>) => {
 					// assert
@@ -124,10 +117,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 					setSpy.calledWith(data.key, JSON.stringify(data.value)).should.be.true();
 					done();
 				});
-		}
+		});
 
-		@test("can set complex values")
-		public canSetComplexValues(done: MochaDone) {
+		it("can set complex values", (done: Mocha.Done) => {
 			// arrange
 			let values: Array<{ value1: number, value2: string, value3: Array<number> }> = [{
 				value1: 1,
@@ -145,7 +137,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			let setSpy = sinon.spy(window.localStorage, "setItem");
 
 			// act
-			this.storage.set<{ value1: number, value2: string, value3: Array<number> }>([{
+			storage.set<{ value1: number, value2: string, value3: Array<number> }>([{
 				key: "test",
 				value: values[0]
 			}, {
@@ -162,10 +154,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				setSpy.calledWith(data[2].key, JSON.stringify(data[2].value)).should.be.true();
 				done();
 			});
-		}
+		});
 
-		@test("will fail to set a value")
-		public willFailSetValue(done: MochaDone) {
+		it("will fail to set a value", (done: Mocha.Done) => {
 			// arrange
 			let key = "key";
 			let value = "value";
@@ -173,7 +164,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			setMock.expects("setItem").throws("Error");
 
 			// act
-			this.storage.set<string>({ key: key, value: value }).catch((reason: BrowserStorage.KeyValueOrError<string>) => {
+			storage.set<string>({ key: key, value: value }).catch((reason: BrowserStorage.KeyValueOrError<string>) => {
 				// assert
 				reason.key.should.equal(key);
 				reason.error.should.not.be.empty();
@@ -182,11 +173,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 			// assert
 			setMock.verify();
-		}
+		});
 
-		@test("will fail to set some values")
-		//@test.skip()
-		public willFailSetValues(done: MochaDone) {
+		it("will fail to set some values", (done: Mocha.Done) => {
 			// arrange
 			let data = [{
 				key: "key1", value: "value1"
@@ -199,7 +188,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			setStub.withArgs(data[1].key, data[1].value).throws("Error");
 
 			// act
-			this.storage.set<string>(data).then((setData: Array<BrowserStorage.KeyValueOrError<string>>) => {
+			storage.set<string>(data).then((setData: Array<BrowserStorage.KeyValueOrError<string>>) => {
 				// assert
 				setStub.calledThrice.should.be.true();
 				setData[0].key.should.equal(data[0].key);
@@ -210,39 +199,37 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				setData[2].error.should.not.be.empty();
 				done();
 			});
-		}
-	}
+		});
+	});
 
-	@suite("key/value get tests")
-	class KeyValueGetTests {
-		private storage: BrowserStorage.IBrowserStorage;
+	describe("key/value get tests", () => {
+		let storage: BrowserStorage.IBrowserStorage;
 
-		public static before() {
+		before(() => {
 			stubs.defineWindow();
-		}
+		});
 
-		public static after() {
+		after(() => {
 			stubs.undefineWindow();
-		}
+		});
 
-		public before() {
+		beforeEach(() => {
 			stubs.defineStorage();
-			this.storage = BrowserStorage.getStorage(StorageType.Local);
-		}
+			storage = BrowserStorage.getStorage(StorageType.Local);
+		});
 
-		public after() {
+		afterEach(() => {
 			stubs.undefineStorage();
-		}
+		});
 
-		@test("can get a simple value")
-		public canGetValue(done: MochaDone) {
+		it("can get a simple value", (done: Mocha.Done) => {
 			// arrange
 			let key = "someitem";
 			let value = "value";
 			let getStub = sinon.stub(window.localStorage, "getItem").withArgs(key).returns(value);
 
 			// act
-			this.storage.get<string>(key).then((data: BrowserStorage.KeyValueOrError<string>) => {
+			storage.get<string>(key).then((data: BrowserStorage.KeyValueOrError<string>) => {
 				// assert
 				getStub.calledOnce.should.be.true();
 				getStub.calledWith(key).should.be.true();
@@ -250,10 +237,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				data.should.have.property('value', value);
 				done();
 			});
-		}
+		});
 
-		@test("can get simple values")
-		public canGetValues(done: MochaDone) {
+		it("can get simple values", (done: Mocha.Done) => {
 			// arrange
 			let keys = ['item1', 'item2', 'item3', 'item4'];
 			let values = ['value1', 'value2', 'value3', 'value4'];
@@ -264,7 +250,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			getStub.withArgs(keys[3]).returns(values[3]);
 
 			// act
-			this.storage.get<string>(keys).then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
+			storage.get<string>(keys).then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
 				// assert
 				getStub.callCount.should.be.exactly(4);
 				getStub.calledWith(keys[0]).should.be.true();
@@ -281,10 +267,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				data[3].should.have.property('value', values[3]);
 				done();
 			});
-		}
+		});
 
-		@test("can get a complex value")
-		public canGetComplexValue(done: MochaDone) {
+		it("can get a complex value", (done: Mocha.Done) => {
 			// arrange
 			let key: string = 'item';
 			let value: { prop1: number, prop2: string, prop3: Object, prop4: Array<any> } = {
@@ -296,7 +281,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			let getStub = sinon.stub(window.localStorage, "getItem").withArgs(key).returns(JSON.stringify(value));
 
 			// act
-			this.storage.get<{ prop1: number, prop2: string, prop3: Object, prop4: Array<any> }>(key)
+			storage.get<{ prop1: number, prop2: string, prop3: Object, prop4: Array<any> }>(key)
 				.then((data: BrowserStorage.KeyValueOrError<{ prop1: number, prop2: string, prop3: Object, prop4: Array<any> }>) => {
 					// assert
 					getStub.calledOnce.should.be.true();
@@ -305,10 +290,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 					data.should.have.property('value', value);
 					done();
 				});
-		}
+		});
 
-		@test("can get complex values")
-		public canGetComplexValues(done: MochaDone) {
+		it("can get complex values", (done: Mocha.Done) => {
 			// arrange
 			let keys: Array<string> = ['item1', 'item2', 'item3'];
 			let values: Array<{ prop1: number, prop2: string }> = [
@@ -331,7 +315,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			getStub.withArgs(keys[2]).returns(JSON.stringify(values[2]));
 
 			// act
-			this.storage.get<{ prop1: number, prop2: string }>(keys)
+			storage.get<{ prop1: number, prop2: string }>(keys)
 				.then((data: Array<BrowserStorage.KeyValueOrError<{ prop1: number, prop2: string }>>) => {
 					// assert
 					getStub.calledThrice.should.be.true();
@@ -346,16 +330,15 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 					data[2].should.have.property('value', values[2]);
 					done();
 				});
-		}
+		});
 
-		@test("will fail to get a value if it doesn't exist")
-		public willFailNotExist(done: MochaDone) {
+		it("will fail to get a value if it doesn't exist", (done: Mocha.Done) => {
 			// arrange
 			let key: string = 'item';
 			let getStub = sinon.stub(window.localStorage, "getItem").withArgs(key).returns(null);
 
 			// act
-			this.storage.get<string>(key).catch((reason: BrowserStorage.KeyValueOrError<string>) => {
+			storage.get<string>(key).catch((reason: BrowserStorage.KeyValueOrError<string>) => {
 				// assert
 				getStub.calledOnce.should.be.true();
 				getStub.calledWith(key).should.be.true();
@@ -363,10 +346,9 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				reason.error.should.not.be.empty();
 				done();
 			});
-		}
+		});
 
-		@test("will only get the values that exists")
-		public willGetValuesThatExists(done: MochaDone) {
+		it("will only get the values that exists", (done: Mocha.Done) => {
 			// arrange
 			let keys: Array<string> = ['item1', 'item2', 'item3'];
 			let values: Array<string> = ['value1'];
@@ -375,7 +357,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			getStub.returns(null);
 
 			// act
-			this.storage.get<string>(keys).then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
+			storage.get<string>(keys).then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
 				// assert
 				getStub.calledThrice.should.be.true();
 				getStub.calledWith(keys[0]).should.be.true();
@@ -390,16 +372,15 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				data[2].should.have.ownProperty('error').and.not.be.empty();
 				done();
 			});
-		}
+		});
 
-		@test("will fail to get values, when they don't exist")
-		public willFailGetValuesThatNotExists(done: MochaDone) {
+		it("will fail to get values, when they don't exist", (done: Mocha.Done) => {
 			// arrange
 			let keys: Array<string> = ['item1', 'item2'];
 			let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
 
 			// act
-			this.storage.get<string>(keys).catch((reason: Array<BrowserStorage.KeyValueOrError<string>>) => {
+			storage.get<string>(keys).catch((reason: Array<BrowserStorage.KeyValueOrError<string>>) => {
 				// assert
 				getStub.calledTwice.should.be.true();
 				getStub.calledWith(keys[0]).should.be.true();
@@ -410,63 +391,59 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				reason[1].should.have.ownProperty('error').and.not.be.empty();
 				done();
 			});
-		}
-	}
+		});
+	});
 
-	@suite("key/value remove tests")
-	class KeyValueRemoveTests {
-		private storage: BrowserStorage.IBrowserStorage;
+	describe("key/value remove tests", () => {
+		let storage: BrowserStorage.IBrowserStorage;
 
-		public static before() {
+		before(() => {
 			stubs.defineWindow();
-		}
+		});
 
-		public static after() {
+		after(() => {
 			stubs.undefineWindow();
-		}
+		});
 
-		public before() {
+		beforeEach(() => {
 			stubs.defineStorage();
-			this.storage = BrowserStorage.getStorage(StorageType.Local);
-		}
+			storage = BrowserStorage.getStorage(StorageType.Local);
+		});
 
-		public after() {
+		afterEach(() => {
 			stubs.undefineStorage();
-		}
+		});
 
-		@test("can remove a value")
-		public canRemoveValue(done: MochaDone) {
+		it("can remove a value", (done: Mocha.Done) => {
 			// arrange
 			let key = 'test';
 			let removeStub = sinon.stub(window.localStorage, "removeItem").withArgs(key);
 
 			// act
-			this.storage.remove(key).then((data: BrowserStorage.KeyValueOrError<void>) => {
+			storage.remove(key).then((data: BrowserStorage.KeyValueOrError<void>) => {
 				removeStub.calledOnce.should.be.true();
 				removeStub.calledWith(key).should.be.true();
 				data.key.should.equal(key);
 				done();
 			});
-		}
+		});
 
-		@test("will fail to remove a value")
-		public willFailRemove(done: MochaDone) {
+		it("will fail to remove a value", (done: Mocha.Done) => {
 			// arrange
 			let key = 'test';
 			let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
 			let removeStub = sinon.stub(window.localStorage, "removeItem");
 
 			// act
-			this.storage.remove(key).catch((reason: BrowserStorage.KeyValueOrError<void>) => {
+			storage.remove(key).catch((reason: BrowserStorage.KeyValueOrError<void>) => {
 				// assert
 				reason.key.should.equal(key);
 				reason.should.have.ownProperty('error').and.not.be.empty();
 				done();
 			});
-		}
+		});
 
-		@test("will only remove values that exists")
-		public willRemoveExisting(done: MochaDone) {
+		it("will only remove values that exists", (done: Mocha.Done) => {
 			// arrange
 			let keys: Array<string> = ['item1', 'item2'];
 			let removeStub = sinon.stub(window.localStorage, "removeItem");
@@ -475,7 +452,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 			getStub.returns(null);
 
 			// act
-			this.storage.remove(keys).then((data: Array<BrowserStorage.KeyValueOrError<void>>) => {
+			storage.remove(keys).then((data: Array<BrowserStorage.KeyValueOrError<void>>) => {
 				// assert
 				removeStub.calledOnce.should.be.true();
 				removeStub.calledWith(keys[0]).should.be.true();
@@ -484,16 +461,15 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				data[1].should.have.ownProperty('error').and.not.be.empty();
 				done();
 			});
-		}
+		});
 
-		@test("will fail to remove values that doesn't exist")
-		public willFailRemoveNonExisting(done: MochaDone) {
+		it("will fail to remove values that doesn't exist", (done: Mocha.Done) => {
 			// arrange
 			let keys: Array<string> = ['item1', 'item2'];
 			let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
 
 			// act
-			this.storage.remove(keys).catch((reason: Array<BrowserStorage.KeyValueOrError<void>>) => {
+			storage.remove(keys).catch((reason: Array<BrowserStorage.KeyValueOrError<void>>) => {
 				// assert
 				reason[0].key.should.equal(keys[0]);
 				reason[0].should.have.ownProperty('error').and.not.be.empty()
@@ -501,41 +477,39 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 				reason[1].should.have.ownProperty('error').and.not.be.empty()
 				done();
 			});
-		}
-	}
+		});
+	});
 
-	@suite("key/value clear tests")
-	class KeyValueClearTests {
-		private storage: BrowserStorage.IBrowserStorage;
+	describe("key/value clear tests", () => {
+		let storage: BrowserStorage.IBrowserStorage;
 
-		public static before() {
+		before(() => {
 			stubs.defineWindow();
-		}
+		});
 
-		public static after() {
+		after(() => {
 			stubs.undefineWindow();
-		}
+		});
 
-		public before() {
+		beforeEach(() => {
 			stubs.defineStorage();
-			this.storage = BrowserStorage.getStorage(StorageType.Local);
-		}
+			storage = BrowserStorage.getStorage(StorageType.Local);
+		});
 
-		public after() {
+		afterEach(() => {
 			stubs.undefineStorage();
-		}
+		});
 
-		@test("can clear the storage")
-		public canClear(done: MochaDone) {
+		it("can clear the storage", (done: Mocha.Done) => {
 			// arrange
 			let clearSpy = sinon.spy(window.localStorage, "clear");
 
 			// act
-			this.storage.clear().then(() => {
+			storage.clear().then(() => {
 				// assert
 				clearSpy.calledOnce.should.be.true();
 				done();
 			});
-		}
-	}
+		});
+	});
 });

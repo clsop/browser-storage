@@ -1,2 +1,4 @@
 .pnpm-store/
+.nyc_output
+coverage/
 test/

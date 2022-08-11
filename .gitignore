@@ -8,9 +8,5 @@ node_modules
 .pnpm-store
 
 # test
-test/tmp
 coverage
 .nyc_output
-
-# sublime
-browser-storage.sublime-{project,workspace}

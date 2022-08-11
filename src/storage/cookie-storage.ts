@@ -2,8 +2,8 @@ import BaseStorage from './base-storage';
 import { StorageType } from '../storage-type';
 
 export default class CookieStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
-	private aKeys: number[];
-	private cookies: Object;
+	//private aKeys: number[];
+	private cookies: any;
 
 	public readonly COOKIE_PART: string;
 
@@ -11,18 +11,19 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 		super(StorageType.Cookie);
 
 		this.COOKIE_PART = '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-		this.aKeys = [];
+		//this.aKeys = [];
 		this.cookies = {};
 
 		this.initializeCookies();
 	}
 
-	private initializeCookies(): Object {
+	private initializeCookies(): any {
 		for (var aCouple, iKey, nIdx = 0, aCouples = document.cookie.split(/\s*;\s*/); nIdx < aCouples.length; nIdx++) {
 			aCouple = aCouples[nIdx].split(/\s*=\s*/);
+			
 			if (aCouple.length > 1) {
 				this.cookies[iKey = decodeURI(aCouple[0])] = decodeURI(aCouple[1]);
-				this.aKeys.push(iKey);
+				//this.aKeys.push(iKey);
 			}
 		}
 
@@ -94,7 +95,7 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 		return new Promise<BrowserStorage.ValueOrError<number>>(
 			(resolve: (value?: BrowserStorage.ValueOrError<number>) => void,
 				reject: (reason?: BrowserStorage.ValueOrError<number>) => void) => {
-
+					// TODO: ?
 			});
 	}
 
@@ -102,7 +103,7 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 		return new Promise<BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>>(
 			(resolve: (value?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void,
 				reject: (reason?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void) => {
-
+					// TODO: ?
 			});
 	}
 
@@ -110,7 +111,7 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 		return new Promise<BrowserStorage.ValueOrError<void>>(
 			(resolve: (value?: BrowserStorage.ValueOrError<void>) => void,
 				reject: (reason?: BrowserStorage.ValueOrError<void>) => void) => {
-
+					// TODO: ?
 			});
 	}
 }
