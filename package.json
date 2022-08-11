@@ -13,16 +13,16 @@
     "sourceMap": true,
     "instrument": true,
     "include": [
-        "src/**/*.ts"
+      "src/**/*.ts"
     ],
     "exclude": [
-        "src/test/**/*.*"
+      "src/test/**/*.*"
     ],
     "reporter": [
-        "html",
-        "lcov",
-        "text",
-        "text-summary"
+      "html",
+      "lcov",
+      "text",
+      "text-summary"
     ],
     "report-dir": "coverage"
   },
