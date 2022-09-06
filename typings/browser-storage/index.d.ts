@@ -1,4 +1,8 @@
 declare namespace BrowserStorage {
+	class BrowserStorageFactory {
+		public static getStorage(type?: StorageType): IBrowserStorage;
+	}
+
 	interface IBrowserStorage {
 		// get
 		get<V extends Object | number | string>(key: string | Array<string>): Promise<KeyValueOrError<V> | Array<KeyValueOrError<V>>>;
@@ -37,3 +41,5 @@ declare namespace BrowserStorage {
 		error?: string;
 	}
 }
+
+export default BrowserStorage;

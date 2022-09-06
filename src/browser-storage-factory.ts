@@ -5,10 +5,12 @@ import CookieStorageApi from './api/cookie-storage-api';
 import LocalStorageApi from './api/local-storage-api';
 import SessionStorageApi from './api/session-storage-api';
 import IndexedDBStorageApi from './api/indexeddb-storage-api';
+import BrowserStorage from '../typings/browser-storage';
 
-export class BrowserStorage {
+
+export class BrowserStorageFactory {
 	public static getStorage(type: StorageType = StorageType.Local): BrowserStorage.IBrowserStorage {
-		let apiObject: ApiObject = null;
+		let apiObject: ApiObject;
 
 		switch(type) {
 			case StorageType.Local: apiObject = new LocalStorageApi(); break;

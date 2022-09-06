@@ -1,5 +1,6 @@
-full-trace: true
-bail: true
+require: ["ts-node/register", "source-map-support/register"]
+extension: ["ts"]
+bail: false
+parallel: false
 recursive: true
-parallel: true
-require: "ts-node/register"
+ui: "bdd"

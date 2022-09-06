@@ -3,6 +3,7 @@ import ApiObject from './api-object';
 import { StorageType } from '../storage-type';
 import CookieStorageApi from './cookie-storage-api';
 import KeyValueStorage from '../storage/keyvalue-storage';
+import BrowserStorage from '../../typings/browser-storage';
 
 export default class LocalStorageApi extends ApiObject {
 	constructor() {

@@ -3,7 +3,7 @@ import { describe, before, beforeEach, after, afterEach } from 'mocha';
 
 import stubs from './stubs';
 import { StorageType } from '../src/storage-type';
-import { BrowserStorage } from '../src/browser-storage';
+import { BrowserStorageFactory } from '../src/browser-storage-factory';
 import KeyValueStorage from '../src/storage/keyvalue-storage';
 
 describe('IndexedDB storage', () => {

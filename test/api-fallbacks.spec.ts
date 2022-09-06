@@ -2,7 +2,7 @@ import 'should';
 import { describe, before, after } from 'mocha';
 
 import stubs from './stubs';
-import { BrowserStorage } from '../src/browser-storage';
+import { BrowserStorageFactory } from '../src/browser-storage-factory';
 import CookieStorage from '../src/storage/cookie-storage';
 import KeyValueStorage from '../src/storage/keyvalue-storage';
 import IndexedDbStorage from '../src/storage/indexeddb-storage';
@@ -25,7 +25,7 @@ describe('Api fallbacks', () => {
 
 		it("localStorage fallback to cookie", () => {
 			// act
-			let storage = BrowserStorage.getStorage(StorageType.Local);
+			let storage = BrowserStorageFactory.getStorage(StorageType.Local);
 
 			// assert
 			storage.should.be.instanceof(CookieStorage);
@@ -47,7 +47,7 @@ describe('Api fallbacks', () => {
 
 		it("sessionStorage fallback to cookie", () => {
 			// act
-			let storage = BrowserStorage.getStorage(StorageType.Session);
+			let storage = BrowserStorageFactory.getStorage(StorageType.Session);
 
 			// assert
 			storage.should.be.instanceof(CookieStorage);
@@ -92,7 +92,7 @@ describe('Api fallbacks', () => {
 		it("cookie fallback to error", () => {
 			// arrange
 			let expectation = () => {
-				BrowserStorage.getStorage(StorageType.Cookie);
+				BrowserStorageFactory.getStorage(StorageType.Cookie);
 			};
 
 			// act, assert

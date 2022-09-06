@@ -2,6 +2,7 @@ import ApiObject from './api-object';
 import BrowserApiError from '../exceptions/browser-api-error';
 
 import CookieStorage from '../storage/cookie-storage';
+import BrowserStorage from '../../typings/browser-storage';
 
 export default class CookieStorageApi extends ApiObject {
 	constructor() {

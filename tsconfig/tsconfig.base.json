@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "lib": ["dom", "esnext"],
+        "declaration": false,
+        "declarationMap": false,
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "skipLibCheck": false,
+        "allowJs": false,
+        "strict": false,
+        "strictNullChecks": false
+    },
+    "files": ["../global.d.ts"]
+}

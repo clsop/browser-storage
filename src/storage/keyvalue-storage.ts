@@ -1,5 +1,6 @@
 import BaseStorage from './base-storage';
 import { StorageType } from '../storage-type';
+import BrowserStorage from '../../typings/browser-storage';
 
 export default class KeyValueStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
 	private readonly storage: Storage;

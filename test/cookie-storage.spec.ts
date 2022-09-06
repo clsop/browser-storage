@@ -4,8 +4,9 @@ import { before, beforeEach, after, afterEach } from 'mocha';
 
 import stubs from './stubs';
 import { StorageType } from '../src/storage-type';
-import { BrowserStorage } from '../src/browser-storage';
+import { BrowserStorageFactory } from '../src/browser-storage-factory';
 import KeyValueStorage from '../src/storage/keyvalue-storage';
+import BrowserStorage from '../typings/browser-storage';
 
 describe('Cookie storage', () => {
 	const COOKIE_PART = "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
@@ -29,7 +30,7 @@ describe('Cookie storage', () => {
 
 		it("can get storage api", () => {
 			// act
-			let storage = BrowserStorage.getStorage(StorageType.Cookie);
+			let storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
 
 			// assert
 			storage.should.not.be.null();
@@ -43,7 +44,7 @@ describe('Cookie storage', () => {
 		before(() => {
 			stubs.defineDocument();
 			cookieFakes = stubs.defineCookie();
-			storage = BrowserStorage.getStorage(StorageType.Cookie);
+			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
 		});
 
 		after(() => {
@@ -147,7 +148,7 @@ describe('Cookie storage', () => {
 		before(() => {
 			stubs.defineDocument();
 			stubs.defineCookie();
-			storage = BrowserStorage.getStorage(StorageType.Cookie);
+			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
 		});
 
 		after(() => {
@@ -174,7 +175,7 @@ describe('Cookie storage', () => {
 		before(() => {
 			stubs.defineDocument();
 			stubs.defineCookie();
-			storage = BrowserStorage.getStorage(StorageType.Cookie);
+			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
 		});
 
 		after(() => {
@@ -197,7 +198,7 @@ describe('Cookie storage', () => {
 		before(() => {
 			stubs.defineDocument();
 			stubs.defineCookie();
-			storage = BrowserStorage.getStorage(StorageType.Cookie);
+			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
 		});
 
 		after(() => {

@@ -4,8 +4,9 @@ import { describe, before, beforeEach, after, afterEach } from 'mocha';
 
 import stubs from './stubs';
 import { StorageType } from '../src/storage-type';
-import { BrowserStorage } from '../src/browser-storage';
+import { BrowserStorageFactory } from '../src/browser-storage-factory';
 import KeyValueStorage from '../src/storage/keyvalue-storage';
+import BrowserStorage from '../typings/browser-storage';
 
 // session and local storage has similar api
 describe('KeyValue storage (localStorage and sessionStorage)', () => {
@@ -28,8 +29,8 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 		it("can get storage api", () => {
 			// act
-			let localStorage = BrowserStorage.getStorage(StorageType.Local);
-			let sessionStorage = BrowserStorage.getStorage(StorageType.Session);
+			let localStorage = BrowserStorageFactory.getStorage(StorageType.Local);
+			let sessionStorage = BrowserStorageFactory.getStorage(StorageType.Session);
 
 			// assert
 			localStorage.should.not.be.null();
@@ -38,7 +39,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 		it("uses localstorage as default", () => {
 			// arrange
-			let storage = BrowserStorage.getStorage();
+			let storage = BrowserStorageFactory.getStorage();
 
 			// assert
 			storage.should.not.be.null();
@@ -59,7 +60,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 		beforeEach(() => {
 			stubs.defineStorage();
-			storage = BrowserStorage.getStorage(StorageType.Local);
+			storage = BrowserStorageFactory.getStorage(StorageType.Local);
 		});
 
 		afterEach(() => {
@@ -215,7 +216,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 		beforeEach(() => {
 			stubs.defineStorage();
-			storage = BrowserStorage.getStorage(StorageType.Local);
+			storage = BrowserStorageFactory.getStorage(StorageType.Local);
 		});
 
 		afterEach(() => {
@@ -407,7 +408,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 		beforeEach(() => {
 			stubs.defineStorage();
-			storage = BrowserStorage.getStorage(StorageType.Local);
+			storage = BrowserStorageFactory.getStorage(StorageType.Local);
 		});
 
 		afterEach(() => {
@@ -493,7 +494,7 @@ describe('KeyValue storage (localStorage and sessionStorage)', () => {
 
 		beforeEach(() => {
 			stubs.defineStorage();
-			storage = BrowserStorage.getStorage(StorageType.Local);
+			storage = BrowserStorageFactory.getStorage(StorageType.Local);
 		});
 
 		afterEach(() => {

@@ -1,3 +1,5 @@
+import BrowserStorage from "../../typings/browser-storage";
+
 export default abstract class ApiObject {
 	protected nextApi: ApiObject;
 

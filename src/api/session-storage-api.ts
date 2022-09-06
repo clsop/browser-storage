@@ -3,6 +3,7 @@ import ApiObject from './api-object';
 import { StorageType } from '../storage-type';
 import KeyValueStorage from '../storage/keyvalue-storage';
 import CookieStorageApi from './cookie-storage-api';
+import BrowserStorage from '../../typings/browser-storage';
 
 export default class SessionStorageApi extends ApiObject {
 	constructor() {
