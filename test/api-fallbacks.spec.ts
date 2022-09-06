@@ -1,5 +1,6 @@
 import 'should';
 import { describe, before, after } from 'mocha';
+import { suite, test } from '@testdeck/mocha';
 
 import stubs from './stubs';
 import { BrowserStorageFactory } from '../src/browser-storage-factory';
@@ -9,94 +10,99 @@ import IndexedDbStorage from '../src/storage/indexeddb-storage';
 
 import { StorageType } from '../src/storage-type';
 
-describe('Api fallbacks', () => {
-	describe("local storage api tests", () => {
-		before(() => {
-			stubs.defineWindow();
-			stubs.defineDocument();
-			stubs.defineCookie();
-		});
+@suite("Api fallbacks: local storage api tests")
+class LocalStorageApiTests {
+	public before() {
+		stubs.defineWindow();
+		stubs.defineDocument();
+		stubs.defineCookie();
+	}
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-			stubs.undefineWindow();
-		});
+	public after() {
+		stubs.undefineCookie();
+		stubs.undefineDocument();
+		stubs.undefineWindow();
+	}
 
-		it("localStorage fallback to cookie", () => {
-			// act
-			let storage = BrowserStorageFactory.getStorage(StorageType.Local);
+	@test("localStorage fallback to cookie")
+	public fallbackToCookieTest() {
+		// act
+		let storage = BrowserStorageFactory.getStorage(StorageType.Local);
 
-			// assert
-			storage.should.be.instanceof(CookieStorage);
-		});
-	});
+		// assert
+		storage.should.be.instanceof(CookieStorage);
+	}
+}
 
-	describe("session storage api tests", () => {
-		before(() => {
-			stubs.defineWindow();
-			stubs.defineDocument();
-			stubs.defineCookie();
-		});
+@suite("Api fallbacks: session storage api tests")
+class SessionStorageApiTests {
+	public before() {
+		stubs.defineWindow();
+		stubs.defineDocument();
+		stubs.defineCookie();
+	}
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-			stubs.undefineWindow();
-		});
+	public after() {
+		stubs.undefineCookie();
+		stubs.undefineDocument();
+		stubs.undefineWindow();
+	}
 
-		it("sessionStorage fallback to cookie", () => {
-			// act
-			let storage = BrowserStorageFactory.getStorage(StorageType.Session);
+	@test("sessionStorage fallback to cookie")
+	public fallbackToCookieTest() {
+		// act
+		let storage = BrowserStorageFactory.getStorage(StorageType.Session);
 
-			// assert
-			storage.should.be.instanceof(CookieStorage);
-		});
-	});
+		// assert
+		storage.should.be.instanceof(CookieStorage);
+	}
+}
 
-	describe("indexedDb storage api tests", () => {
-		before(() => {
-			stubs.defineWindow();
-			stubs.defineDocument();
-			stubs.defineStorage();
-		});
+@suite("Api fallbacks: cookie storage api tests")
+class CookieStorageApiTests {
+	public before() {
+		stubs.defineWindow();
+		stubs.defineDocument();
+	}
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-			stubs.undefineStorage();
-		});
+	public after() {
+		stubs.undefineDocument();
+		stubs.undefineWindow();
+	}
 
-		// @test("indexedDb fallback to localStorage")
-		// public IndexDbStorageToLocalStorage() {
-		// 	// act
-		// 	let storage = BrowserStorage.getStorage(StorageType.IndexedDB);
+	@test("cookie fallback to error")
+	public fallbackToErrorTest() {
+		// arrange
+		let expectation = () => {
+			BrowserStorageFactory.getStorage(StorageType.Cookie);
+		};
 
-		// 	// assert
-		// 	// TODO: check keyvaluestorage type
-		// 	storage.should.be.instanceof(KeyValueStorage);
-		// }
-	});
+		// act, assert
+		expectation.should.throw(Error);
+	}
+}
 
-	describe("cookie storage api tests", () => {
-		before(() => {
-			stubs.defineWindow();
-			stubs.defineDocument();
-		});
+@suite("Api fallbacks: indexedDb api tests")
+class IndexedDBApiTests {
+	public before() {
+		stubs.defineWindow();
+		stubs.defineDocument();
+		stubs.defineStorage();
+	}
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-		});
+	public after() {
+		stubs.undefineDocument();
+		stubs.undefineStorage();
+		stubs.undefineWindow();
+	}
 
-		it("cookie fallback to error", () => {
-			// arrange
-			let expectation = () => {
-				BrowserStorageFactory.getStorage(StorageType.Cookie);
-			};
+	@test.pending("indexedDb fallback to localStorage")
+	public fallbackToLocalStorageTest() {
+		// act
+		let storage = BrowserStorageFactory.getStorage(StorageType.IndexedDB);
 
-			// act, assert
-			expectation.should.throw(Error);
-		});
-	});
-});
+		// assert
+		// TODO: check keyvaluestorage type
+		storage.should.be.instanceof(KeyValueStorage);
+	}
+}

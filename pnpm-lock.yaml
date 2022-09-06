@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@istanbuljs/nyc-config-typescript': ^1.0.2
+  '@testdeck/mocha': ^0.2.0
   '@types/mocha': ^9.1.1
   '@types/node': ^18.7.1
   '@types/sinon': ^10.0.13
@@ -15,6 +16,7 @@ specifiers:
 
 devDependencies:
   '@istanbuljs/nyc-config-typescript': 1.0.2_nyc@15.1.0
+  '@testdeck/mocha': 0.2.0
   '@types/mocha': 9.1.1
   '@types/node': 18.7.14
   '@types/sinon': 10.0.13
@@ -329,6 +331,17 @@ packages:
 
   /@sinonjs/text-encoding/0.7.2:
     resolution: {integrity: sha512-sXXKG+uL9IrKqViTtao2Ws6dy0znu9sOaP1di/jKGW1M6VssO8vlpXCQcpZ+jisQ1tTFAC5Jo/EOzFbggBagFQ==}
+    dev: true
+
+  /@testdeck/core/0.2.0:
+    resolution: {integrity: sha512-2BAzKS18I+nFUb9kH2zK7Bs1CBD0WqaYikaLm+gRaOiQKYa8flvVzqlUGwjyOMmD16JFksgxYml4/7xm4tfEYA==}
+    dev: true
+
+  /@testdeck/mocha/0.2.0:
+    resolution: {integrity: sha512-xudmoPiytaV3flmPZnRO02TPsH31IJuLkGGIX9ftOmditOgA57RK9tYDHNpanA9HxC6kQLP97Tut0RfILENn7w==}
+    hasBin: true
+    dependencies:
+      '@testdeck/core': 0.2.0
     dev: true
 
   /@tsconfig/node10/1.0.9:

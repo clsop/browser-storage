@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@testdeck/mocha": "^0.2.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.1",
     "@types/sinon": "^10.0.13",
