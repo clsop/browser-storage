@@ -14,8 +14,8 @@ const defineDocument = () => Object.defineProperty(global, 'document', {
 });
 // simple cookie implementation with test doubles
 const defineCookie = () => {
-	let getStub: sinon.SinonStub = null;
-	let setSpy: sinon.SinonSpy = null;
+	let getStub: sinon.SinonStub<[], any> = null;
+	let setStub: sinon.SinonStub<[v: any], void> = null;
 	
 	Object.defineProperty(global.document, "cookie", (() => {
 		let self: PropertyDescriptor = <PropertyDescriptor>this;
@@ -27,14 +27,14 @@ const defineCookie = () => {
 		self.enumerable = true;
 
 		getStub = sinon.stub(self, "get").callThrough();
-		setSpy = sinon.stub(self, "set").callThrough();
+		setStub = sinon.stub(self, "set").callThrough();
 
 		return this;
 	})());
 
 	return {
 		getStub: getStub,
-		setSpy: setSpy
+		setStub: setStub
 	};
 };
 const defineStorage = () => {

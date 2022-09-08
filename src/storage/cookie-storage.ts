@@ -1,6 +1,7 @@
 import BaseStorage from './base-storage';
 import { StorageType } from '../storage-type';
 import BrowserStorage from '../../typings/browser-storage';
+import UnsupportedError from '../exceptions/unsupported-error';
 
 export default class CookieStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
 	//private aKeys: number[];
@@ -11,8 +12,9 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 	constructor() {
 		super(StorageType.Cookie);
 
-		this.COOKIE_PART = '; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/';
-		//this.aKeys = [];
+		let expires = new Date();
+		expires.setUTCFullYear(expires.getFullYear() + 1000);
+		this.COOKIE_PART = `; expires=${expires}`;
 		this.cookies = {};
 
 		this.initializeCookies();
@@ -24,7 +26,6 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 			
 			if (aCouple.length > 1) {
 				this.cookies[iKey = decodeURI(aCouple[0])] = decodeURI(aCouple[1]);
-				//this.aKeys.push(iKey);
 			}
 		}
 
@@ -71,7 +72,7 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 			});
 	}
 
-	public set<V extends Object | number | string>(data: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>): Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>> {
+	public set<V extends Object | number | string, O extends BrowserStorage.ICookieOptions>(data: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>, options?: O): Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>> {
 		return new Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>>(
 			(resolve: (value?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void,
 				reject: (reason?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void) => {
@@ -80,14 +81,20 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 						let key = keyValues[index].key;
 						let value = keyValues[index].value;
 
+						// TODO: embed cookie options
 						document.cookie = `${key}=${JSON.stringify(value)}${this.COOKIE_PART}`;
 					}
 
 					resolve(keyValues);
 				}, (keyValue: BrowserStorage.KeyValue<V>) => {
+					// TODO: embed cookie options
 					document.cookie = `${keyValue.key}=${JSON.stringify(keyValue.value)}${this.COOKIE_PART}`;
 
-					resolve(keyValue);
+					if (document.cookie.indexOf(`${keyValue.key}=`) !== -1) {
+						resolve(keyValue);
+					} else {
+						reject({ key: keyValue.key, error: `${StorageType[this.storageType]} storage: could not insert cookie with key "${keyValue.key}"!` });
+					}
 				});
 			});
 	}
@@ -96,7 +103,7 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 		return new Promise<BrowserStorage.ValueOrError<number>>(
 			(resolve: (value?: BrowserStorage.ValueOrError<number>) => void,
 				reject: (reason?: BrowserStorage.ValueOrError<number>) => void) => {
-					// TODO: ?
+					// TODO: split on /r to gather cookies
 			});
 	}
 
@@ -104,15 +111,11 @@ export default class CookieStorage extends BaseStorage implements BrowserStorage
 		return new Promise<BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>>(
 			(resolve: (value?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void,
 				reject: (reason?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void) => {
-					// TODO: ?
+					// TODO: set expire to 0 in cookie
 			});
 	}
 
 	public clear(): Promise<BrowserStorage.ValueOrError<void>> {
-		return new Promise<BrowserStorage.ValueOrError<void>>(
-			(resolve: (value?: BrowserStorage.ValueOrError<void>) => void,
-				reject: (reason?: BrowserStorage.ValueOrError<void>) => void) => {
-					// TODO: ?
-			});
+		throw new UnsupportedError("cannot clear all cookies!")
 	}
 }
