@@ -8,8 +8,8 @@ import IndexedDBStorageApi from './api/indexeddb-storage-api';
 import BrowserStorage from '../typings/browser-storage';
 
 
-export class BrowserStorageFactory {
-	public static getStorage(type: StorageType = StorageType.Local): BrowserStorage.IBrowserStorage {
+export class BrowserStorageFactory implements BrowserStorage.BrowserStorageFactory {
+	public static getStorage(type: StorageType = StorageType.Local): BrowserStorage.Storage {
 		let apiObject: ApiObject;
 
 		switch(type) {

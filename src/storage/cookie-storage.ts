@@ -1,121 +1,257 @@
-import BaseStorage from './base-storage';
-import { StorageType } from '../storage-type';
-import BrowserStorage from '../../typings/browser-storage';
-import UnsupportedError from '../exceptions/unsupported-error';
+import BaseStorage from "./base-storage";
+import { StorageType } from "../storage-type";
+import BrowserStorage from "../../typings/browser-storage";
+import CookieOptions from "../options/cookie-options";
 
-export default class CookieStorage extends BaseStorage implements BrowserStorage.IBrowserStorage {
-	//private aKeys: number[];
-	private cookies: any;
+type CookieObject = {
+  [property: string]: string;
+};
+type Cookies = {
+  [cookieKey: string]: CookieObject;
+};
 
-	public readonly COOKIE_PART: string;
+export default class CookieStorage
+  extends BaseStorage
+  implements BrowserStorage.ICookieStorage
+{
+  private readonly keySplit: RegExp;
+  private cookies: Cookies;
 
-	constructor() {
-		super(StorageType.Cookie);
+  constructor() {
+    super(StorageType.Cookie);
 
-		let expires = new Date();
-		expires.setUTCFullYear(expires.getFullYear() + 1000);
-		this.COOKIE_PART = `; expires=${expires}`;
-		this.cookies = {};
+    this.keySplit = /\s*=\s*/;
+    this.cookies = {};
+    
+    this.initializeCookies();
+  }
 
-		this.initializeCookies();
-	}
+  private initializeCookies(): Cookies {
+    const rawCookies = document.cookie.split("\r");
 
-	private initializeCookies(): any {
-		for (var aCouple, iKey, nIdx = 0, aCouples = document.cookie.split(/\s*;\s*/); nIdx < aCouples.length; nIdx++) {
-			aCouple = aCouples[nIdx].split(/\s*=\s*/);
-			
-			if (aCouple.length > 1) {
-				this.cookies[iKey = decodeURI(aCouple[0])] = decodeURI(aCouple[1]);
-			}
-		}
+    if (rawCookies.length > 0 && rawCookies[0] !== '') {
+      for (let i = 0; i < rawCookies.length; i++) {
+        const rawCookie = rawCookies[i];
+        let cookie: CookieObject = {};
+        const aCouples = rawCookie.split(/\s*;\s*/);
 
-		return this.cookies;
-	}
+        for (let aCouple, iKey, nIdx = 0; nIdx < aCouples.length; nIdx++) {
+          aCouple = aCouples[nIdx].split(this.keySplit);
 
-	private foundOrNot<V>(key: string, values: Array<BrowserStorage.KeyValueOrError<V>>): Array<BrowserStorage.KeyValueOrError<V>> {
-		let value: V = this.cookies[key] ? this.cookies[key] : this.initializeCookies()[key];
+          if (aCouple.length > 1) {
+            cookie[(iKey = decodeURI(aCouple[0]))] = decodeURI(aCouple[1]);
+          }
+        }
 
-		if (value !== undefined) {
-			values.push({ key: key, value: value });
-		} else {
-			values.push({ key: key, error: `${StorageType[this.storageType]} storage: value with key "${key}" was not found!` });
-		}
+        this.cookies[aCouples[0].split(this.keySplit)[0]] = cookie;
+      }
+    }
 
-		return values;
-	}
+    return this.cookies;
+  }
 
-	public get<V extends Object | number | string>(key: string | Array<string>): Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>> {
-		return new Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>>(
-			(resolve: (value?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void,
-				reject: (reason?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void) => {
-				this.asArray<string>(key, (keys: Array<string>) => {
-					let values: Array<BrowserStorage.KeyValueOrError<V>> = [];
+  private foundOrNot<V>(
+    key: string,
+    values: Array<BrowserStorage.KeyValueOrError<V>>
+  ): Array<BrowserStorage.KeyValueOrError<V>> {
+    let cookie: CookieObject = this.cookies[key]
+      ? this.cookies[key]
+      : this.initializeCookies()[key];
 
-					for (let index in keys) {
-						this.foundOrNot<V>(keys[index], values);
-					}
+    if (cookie && key in cookie) {
+      values.push({ key: key, value: JSON.parse(cookie[key]) });
+    } else {
+      values.push({
+        key: key,
+        error: `${
+          StorageType[this.storageType]
+        } storage: value with key "${key}" was not found!`,
+      });
+    }
 
-					if (values.filter((value) => value.error !== undefined).length === values.length) {
-						reject(values);
-					}
+    return values;
+  }
 
-					resolve(values);
-				}, (key: string) => {
-					let value = this.foundOrNot<V>(key, [])[0];
+  public get<V extends Object | number | string>(
+    key: string | Array<string>
+  ): Promise<
+    BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>
+  > {
+    return new Promise<
+      | BrowserStorage.KeyValueOrError<V>
+      | Array<BrowserStorage.KeyValueOrError<V>>
+    >(
+      (
+        resolve: (
+          value?:
+            | BrowserStorage.KeyValueOrError<V>
+            | Array<BrowserStorage.KeyValueOrError<V>>
+        ) => void,
+        reject: (
+          reason?:
+            | BrowserStorage.KeyValueOrError<V>
+            | Array<BrowserStorage.KeyValueOrError<V>>
+        ) => void
+      ) => {
+        this.asArray<string>(
+          key,
+          (keys: Array<string>) => {
+            let values: Array<BrowserStorage.KeyValueOrError<V>> = [];
 
-					if (value.error !== undefined) {
-						reject(value);
-					} else {
-						resolve(value);
-					}
-				});
-			});
-	}
+            for (let index in keys) {
+              this.foundOrNot<V>(keys[index], values);
+            }
 
-	public set<V extends Object | number | string, O extends BrowserStorage.ICookieOptions>(data: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>, options?: O): Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>> {
-		return new Promise<BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>>(
-			(resolve: (value?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void,
-				reject: (reason?: BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>) => void) => {
-				this.asArray<BrowserStorage.KeyValue<V>>(data, (keyValues: Array<BrowserStorage.KeyValue<V>>) => {
-					for (let index in keyValues) {
-						let key = keyValues[index].key;
-						let value = keyValues[index].value;
+            if (
+              values.filter((value) => value.error !== undefined).length ===
+              values.length
+            ) {
+              reject(values);
+            }
 
-						// TODO: embed cookie options
-						document.cookie = `${key}=${JSON.stringify(value)}${this.COOKIE_PART}`;
-					}
+            resolve(values);
+          },
+          (key: string) => {
+            let value = this.foundOrNot<V>(key, [])[0];
 
-					resolve(keyValues);
-				}, (keyValue: BrowserStorage.KeyValue<V>) => {
-					// TODO: embed cookie options
-					document.cookie = `${keyValue.key}=${JSON.stringify(keyValue.value)}${this.COOKIE_PART}`;
+            if (value.error !== undefined) {
+              reject(value);
+            } else {
+              resolve(value);
+            }
+          }
+        );
+      }
+    );
+  }
 
-					if (document.cookie.indexOf(`${keyValue.key}=`) !== -1) {
-						resolve(keyValue);
-					} else {
-						reject({ key: keyValue.key, error: `${StorageType[this.storageType]} storage: could not insert cookie with key "${keyValue.key}"!` });
-					}
-				});
-			});
-	}
+  public set<
+    V extends Object | number | string,
+    O extends BrowserStorage.ICookieOptions
+  >(
+    data: BrowserStorage.KeyValue<V> | Array<BrowserStorage.KeyValue<V>>,
+    options?: O
+  ): Promise<
+    BrowserStorage.KeyValueOrError<V> | Array<BrowserStorage.KeyValueOrError<V>>
+  > {
+    var cookieOptions = new CookieOptions<V>(options);
 
-	public count(): Promise<BrowserStorage.ValueOrError<number>> {
-		return new Promise<BrowserStorage.ValueOrError<number>>(
-			(resolve: (value?: BrowserStorage.ValueOrError<number>) => void,
-				reject: (reason?: BrowserStorage.ValueOrError<number>) => void) => {
-					// TODO: split on /r to gather cookies
-			});
-	}
+    return new Promise<
+      | BrowserStorage.KeyValueOrError<V>
+      | Array<BrowserStorage.KeyValueOrError<V>>
+    >(
+      (
+        resolve: (
+          value?:
+            | BrowserStorage.KeyValueOrError<V>
+            | Array<BrowserStorage.KeyValueOrError<V>>
+        ) => void,
+        reject: (
+          reason?:
+            | BrowserStorage.KeyValueOrError<V>
+            | Array<BrowserStorage.KeyValueOrError<V>>
+        ) => void
+      ) => {
+        this.asArray<BrowserStorage.KeyValue<V>>(
+          data,
+          (keyValues: Array<BrowserStorage.KeyValue<V>>) => {
+            for (let index in keyValues) {
+              document.cookie = cookieOptions.create(keyValues[index]);
+            }
 
-	public remove(key: string | Array<string>): Promise<BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>> {
-		return new Promise<BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>>(
-			(resolve: (value?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void,
-				reject: (reason?: BrowserStorage.KeyValueOrError<void> | Array<BrowserStorage.KeyValueOrError<void>>) => void) => {
-					// TODO: set expire to 0 in cookie
-			});
-	}
+            resolve(keyValues);
+          },
+          (keyValue: BrowserStorage.KeyValue<V>) => {
+            document.cookie = cookieOptions.create(keyValue);
 
-	public clear(): Promise<BrowserStorage.ValueOrError<void>> {
-		throw new UnsupportedError("cannot clear all cookies!")
-	}
+            resolve(keyValue);
+          }
+        );
+      }
+    );
+  }
+
+  public count(): Promise<BrowserStorage.ValueOrError<number>> {
+    return new Promise<BrowserStorage.ValueOrError<number>>(
+      (
+        resolve: (value?: BrowserStorage.ValueOrError<number>) => void,
+        reject: (reason?: BrowserStorage.ValueOrError<number>) => void
+      ) => {
+        resolve({ value: document.cookie.split("/r").length });
+      }
+    );
+  }
+
+  public remove(
+    key: string | Array<string>
+  ): Promise<
+    | BrowserStorage.KeyValueOrError<void>
+    | Array<BrowserStorage.KeyValueOrError<void>>
+  > {
+    var cookieOptions = new CookieOptions<void>({
+      maxAge: 0
+    });
+
+    return new Promise<
+      | BrowserStorage.KeyValueOrError<void>
+      | Array<BrowserStorage.KeyValueOrError<void>>
+    >(
+      (
+        resolve: (
+          value?:
+            | BrowserStorage.KeyValueOrError<void>
+            | Array<BrowserStorage.KeyValueOrError<void>>
+        ) => void,
+        reject: (
+          reason?:
+            | BrowserStorage.KeyValueOrError<void>
+            | Array<BrowserStorage.KeyValueOrError<void>>
+        ) => void
+      ) => {
+        this.asArray<string>(
+          key,
+          (keys: Array<string>) => {
+            let keyValues: Array<BrowserStorage.KeyValueOrError<void>> = [];
+
+            for (let index in keys) {
+              this.foundOrNot<void>(keys[index], keyValues);
+              
+              if (keyValues.length > 0) {
+                for (let valuePair of keyValues) {
+                  const keyValue: BrowserStorage.KeyValueOrError<void> = { key: valuePair.key, value: valuePair.value };
+                  
+                  if (!keyValue.error) {
+                    document.cookie = cookieOptions.create({ key: keyValue.key, value: keyValue.value });
+                  }
+                }
+              }
+            }
+
+            resolve(keyValues);
+          },
+          (key: string) => {
+            const valuePair = this.foundOrNot<void>(key, [])[0];
+            
+            if (!valuePair.error) {
+              document.cookie = cookieOptions.create({ key: valuePair.key, value: valuePair.value });
+              resolve(valuePair);
+            } else {
+              reject(valuePair);
+            }
+          }
+        );
+      }
+    );
+  }
+
+  public clear(): Promise<BrowserStorage.ValueOrError<void>> {
+    return new Promise<BrowserStorage.ValueOrError<void>>(
+      (
+        resolve: (value?: BrowserStorage.ValueOrError<void>) => void,
+        reject: (reason?: BrowserStorage.ValueOrError<void>) => void
+      ) => {
+        reject({ error: "cannot clear all cookies!" });
+      }
+    );
+  }
 }
