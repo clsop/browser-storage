@@ -1,4 +1,4 @@
-name: BrowserStorage
+name: BrowserStorage-Pnpm
 on: push
 jobs:
   verify:
