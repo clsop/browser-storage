@@ -37,10 +37,12 @@
   },
   "scripts": {
     "build": "npm build-cjs && npm build-esm",
+    "build:pnpm": "pnpm build-cjs && pnpm build-esm",
     "build-cjs": "tsc -p tsconfig/tsconfig.cjs.json",
     "build-esm": "tsc -p tsconfig/tsconfig.esm.json",
     "test": "mocha",
-    "test:coverage": "nyc npm test"
+    "test:coverage": "nyc npm test",
+    "test:pnpm:coverage": "nyc pnpm test"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
