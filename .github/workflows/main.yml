@@ -9,7 +9,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.16.0
-          cache: pnpm
       - run: npm ci
       - run: npm run test:coverage
   build:

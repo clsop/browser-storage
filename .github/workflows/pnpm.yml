@@ -10,7 +10,7 @@ jobs:
         with:
           version: 7.11.0
           cache: pnpm
-      - uses: actions/node-setup@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '16.16.0'
           cache: 'pnpm'
