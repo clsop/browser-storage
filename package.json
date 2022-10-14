@@ -32,11 +32,11 @@
     "report-dir": "coverage"
   },
   "scripts": {
-    "build": "pnpm build-cjs && pnpm build-esm",
+    "build": "npm build-cjs && npm build-esm",
     "build-cjs": "tsc -p tsconfig/tsconfig.cjs.json",
     "build-esm": "tsc -p tsconfig/tsconfig.esm.json",
     "test": "mocha",
-    "test:coverage": "nyc pnpm test"
+    "test:coverage": "nyc npm test"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",

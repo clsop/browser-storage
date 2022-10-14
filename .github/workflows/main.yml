@@ -1,0 +1,21 @@
+name: BrowserStorage
+on: push
+jobs:
+  verify:
+    name: Run test and coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:coverage
+  build:
+    if: env.prod === true
+    needs: verify
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
