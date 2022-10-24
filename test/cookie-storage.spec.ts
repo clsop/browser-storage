@@ -166,65 +166,6 @@ class CookieSetTests {
     CookieSetTests.cookieFakes.setStub.calledWith(cookies[0]).should.be.true();
     CookieSetTests.cookieFakes.setStub.calledWith(cookies[1]).should.be.true();
   }
-
-  // obsolete
-  @test.skip("will fail to set a value")
-  public async willFailSetValue(): Promise<any> {
-    // arrange
-    const key = "key";
-    const value = "value";
-    const exception = {
-      key: key,
-      error: "",
-    } as BrowserStorage.KeyValueOrError<string>;
-    CookieSetTests.cookieFakes.setStub.throws(exception);
-
-    // act
-    try {
-      let data = (await CookieSetTests.storage.set<string>({
-        key: key,
-        value: value,
-      })) as BrowserStorage.KeyValueOrError<string>;
-      data.should.fail();
-    } catch (error) {
-      // assert
-      CookieSetTests.cookieFakes.setStub.calledOnce.should.be.true();
-      CookieSetTests.cookieFakes.setStub.threw(exception);
-    }
-  }
-
-  // obsolete
-  @test.skip("will fail to set some values")
-  public async willFailSetValues(): Promise<any> {
-    // arrange
-    const values: Array<{ key: string; value: TestObj }> = [
-      {
-        key: "test1",
-        value: { decimal: 1.1, num: 1, test: "test" },
-      },
-      {
-        key: "test2",
-        value: { decimal: 2.1, num: 3, test: "test" },
-      },
-    ];
-    const exception = {
-      key: values[0].key,
-      error: "",
-    } as BrowserStorage.KeyValueOrError<string>;
-    CookieSetTests.cookieFakes.setStub.throws(exception);
-
-    // act
-    try {
-      let data = (await CookieSetTests.storage.set<TestObj>(
-        values
-      )) as BrowserStorage.KeyValueOrError<TestObj>;
-      data.should.fail();
-    } catch (error) {
-      // assert
-      CookieSetTests.cookieFakes.setStub.calledOnce.should.be.true();
-      CookieSetTests.cookieFakes.setStub.threw(exception);
-    }
-  }
 }
 
 @suite("Cookie storage: cookie get tests")
