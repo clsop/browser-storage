@@ -1,7 +1,7 @@
 import BaseStorage from "./base-storage";
 import { StorageType } from "../storage-type";
 import BrowserStorage from "../../typings/browser-storage";
-import CookieOptions from "../options/cookie-options";
+import CookieOptions from "../cookie-options";
 
 type CookieObject = {
   [property: string]: string;
@@ -33,17 +33,19 @@ export default class CookieStorage
       for (let i = 0; i < rawCookies.length; i++) {
         const rawCookie = rawCookies[i];
         let cookie: CookieObject = {};
-        const aCouples = rawCookie.split(/\s*;\s*/);
+        const aCouples = rawCookie.split(/bs_\s*;\s*/);
 
         for (let aCouple, iKey, nIdx = 0; nIdx < aCouples.length; nIdx++) {
           aCouple = aCouples[nIdx].split(this.keySplit);
+          const key = aCouple[0].substring(3);
 
           if (aCouple.length > 1) {
-            cookie[(iKey = decodeURI(aCouple[0]))] = decodeURI(aCouple[1]);
+            cookie[(iKey = decodeURI(key))] = decodeURI(aCouple[1]);
           }
         }
 
-        this.cookies[aCouples[0].split(this.keySplit)[0]] = cookie;
+        const key = aCouples[0].split(this.keySplit)[0].substring(3);
+        this.cookies[key] = cookie;
       }
     }
 
@@ -156,13 +158,17 @@ export default class CookieStorage
           data,
           (keyValues: Array<BrowserStorage.KeyValue<V>>) => {
             for (let index in keyValues) {
-              document.cookie = cookieOptions.create(keyValues[index]);
+              let keyValue = keyValues[index];
+              keyValue.key = this.getKeyName(keyValue.key);
+              document.cookie = cookieOptions.create(keyValue);
             }
 
             resolve(keyValues);
           },
           (keyValue: BrowserStorage.KeyValue<V>) => {
-            document.cookie = cookieOptions.create(keyValue);
+            let keyValueCopy = Object.assign({}, keyValue);
+            keyValueCopy.key = this.getKeyName(keyValue.key);
+            document.cookie = cookieOptions.create(keyValueCopy);
 
             resolve(keyValue);
           }
@@ -250,6 +256,7 @@ export default class CookieStorage
         resolve: (value?: BrowserStorage.ValueOrError<void>) => void,
         reject: (reason?: BrowserStorage.ValueOrError<void>) => void
       ) => {
+        // TODO: clear all sp_ cookies
         reject({ error: "cannot clear all cookies!" });
       }
     );

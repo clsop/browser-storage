@@ -39,7 +39,6 @@ declare namespace BrowserStorage {
 		expires?: Date;
 		secure?: boolean;
 		sameSite?: SameSite;
-		persist?: boolean;
 	}
 
 	enum StorageType {

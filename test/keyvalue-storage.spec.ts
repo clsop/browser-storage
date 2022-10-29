@@ -89,7 +89,7 @@ describe("KeyValue storage (localStorage and sessionStorage)", () => {
   // 		});
   // 	});
 
-  describe("key/value set tests", () => {
+  xdescribe("key/value set tests", () => {
     let storage: BrowserStorage.IBrowserStorage;
 
     before(() => {
@@ -311,7 +311,7 @@ describe("KeyValue storage (localStorage and sessionStorage)", () => {
     });
   });
 
-  describe("key/value get tests", () => {
+  xdescribe("key/value get tests", () => {
     let storage: BrowserStorage.IBrowserStorage;
 
     before(() => {
@@ -549,7 +549,7 @@ describe("KeyValue storage (localStorage and sessionStorage)", () => {
     });
   });
 
-  describe("key/value remove tests", () => {
+  xdescribe("key/value remove tests", () => {
     let storage: BrowserStorage.IBrowserStorage;
 
     before(() => {
@@ -643,7 +643,7 @@ describe("KeyValue storage (localStorage and sessionStorage)", () => {
     });
   });
 
-  describe("key/value clear tests", () => {
+  xdescribe("key/value clear tests", () => {
     let storage: BrowserStorage.IBrowserStorage;
 
     before(() => {

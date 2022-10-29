@@ -6,7 +6,7 @@ import stubs from "./stubs";
 import { StorageType } from "../src/storage-type";
 import { BrowserStorageFactory } from "../src/browser-storage-factory";
 import BrowserStorage from "../typings/browser-storage";
-import CookieOptions from "../src/options/cookie-options";
+import CookieOptions from "../src/cookie-options";
 
 type TestObj = { test: string; num: number; decimal: number };
 type CookieFakes = {
@@ -80,12 +80,34 @@ class CookieSetTests {
       value: value,
     })) as BrowserStorage.KeyValueOrError<string>;
     const cookie = CookieSetTests.cookieOptions.create({
-      key: data.key,
+      key: `bs_${data.key}`,
       value: data.value,
     });
 
     // assert
     CookieSetTests.cookieFakes.setStub.calledOnce.should.be.true();
+    CookieSetTests.cookieFakes.setStub
+      .calledWithExactly(cookie)
+      .should.be.true();
+  }
+
+  @test("will prefix cookies set through api")
+  public async willPrefixCookieTest(): Promise<any> {
+    // arrange
+    const key = "key";
+    const value = "value";
+
+    // act
+    const data = (await CookieSetTests.storage.set<string>({
+      key: key,
+      value: value,
+    })) as BrowserStorage.KeyValueOrError<string>;
+    const cookie = CookieSetTests.cookieOptions.create({
+      key: `bs_${data.key}`,
+      value: data.value,
+    });
+
+    // assert
     CookieSetTests.cookieFakes.setStub
       .calledWithExactly(cookie)
       .should.be.true();
@@ -128,7 +150,7 @@ class CookieSetTests {
       value: value,
     })) as BrowserStorage.KeyValueOrError<TestObj>;
     const cookie = CookieSetTests.cookieOptions.create({
-      key: data.key,
+      key: `bs_${data.key}`,
       value: data.value,
     });
 
@@ -202,7 +224,7 @@ class CookieGetTests {
     // arrange
     const key = "key";
     const value = "value";
-    document.cookie = `${key}="${value}"`
+    document.cookie = `bs_${key}="${value}"`;
     
     // act
     const data = (await this.storage.get<string>(
@@ -220,7 +242,7 @@ class CookieGetTests {
     // arrange
     const key = "key";
     const value: TestObj = { decimal: 34.2, num: 3, test: "test" };
-    document.cookie = `${key}=${JSON.stringify(value)}`
+    document.cookie = `bs_${key}=${JSON.stringify(value)}`
     
     // act
     const data = (await this.storage.get<TestObj>(
@@ -240,16 +262,10 @@ class CookieGetTests {
       { decimal: 34.2, num: 3, test: "test" },
       { decimal: 53.7, num: 4, test: "test2" },
     ];
-    await this.storage.set<TestObj>([
-      {
-        key: keys[0],
-        value: values[0],
-      },
-      {
-        key: keys[1],
-        value: values[1],
-      },
-    ]);
+
+    for (let i in keys) {
+      document.cookie = `bs_${keys[i]}=${JSON.stringify(values[i])}`;
+    }
 
     // act
     const data = (await this.storage.get<TestObj>(keys)) as Array<
@@ -259,8 +275,10 @@ class CookieGetTests {
     // assert
     CookieGetTests.cookieFakes.getStub.called.should.be.true();
     data.should.be.Array();
-    data.map((x) => x.key).should.have.length(keys.length);
-    data.map((x) => x.key).should.containDeep(keys);
+
+    const resultKeys = data.map((x) => x.key);
+    resultKeys.should.have.length(keys.length);
+    resultKeys.should.containDeep(keys);
     data.map((x) => x.value).should.containDeep(values);
   }
 
@@ -283,18 +301,17 @@ class CookieGetTests {
   public async willFailValuesTest(): Promise<any> {
     // arrange
     const keys = ["key", "key2"];
-    await this.storage.set<TestObj>({
-      key: keys[0],
-      value: { decimal: 2.2, num: 33, test: "valid" },
-    });
-
+    document.cookie = `bs_${keys[0]}=${JSON.stringify({ decimal: 2.2, num: 33, test: "valid" })}`;
+    
     // act
     const data = (await this.storage.get<TestObj>(keys)) as Array<
       BrowserStorage.KeyValueOrError<TestObj>
     >;
 
     // assert
+    data[0].key.should.be.equal(keys[0]);
     data[0].value.should.not.be.null();
+    data[1].key.should.be.equal(keys[1]);
     data[1].error.should.not.be.null();
   }
 }
@@ -331,7 +348,7 @@ class CookieRemoveTests {
     // arrange
     const key = "key";
     const value = "value";
-    document.cookie = `${key}=${JSON.stringify(value)}`;
+    document.cookie = `bs_${key}=${JSON.stringify(value)}`;
 
     // act
     const data = (await this.storage.remove(
@@ -362,7 +379,7 @@ class CookieRemoveTests {
       },
     ];
     const removeKeys = [keyValues[0].key, keyValues[2].key];
-    keyValues.forEach((x) => (document.cookie = `${x.key}=${JSON.stringify(x.value)}`));
+    keyValues.forEach((x) => (document.cookie = `bs_${x.key}=${JSON.stringify(x.value)}`));
 
     // act
     const data = (await this.storage.remove(removeKeys)) as Array<
@@ -376,7 +393,7 @@ class CookieRemoveTests {
 
     for (let key of removeKeys) {
       document.cookie.should.not.be.containEql(
-        `${key}=${data.find((x) => x.key == key).value}`
+        `bs_${key}=${data.find((x) => x.key == key).value}`
       );
     }
   }
@@ -417,7 +434,7 @@ class CookieRemoveTests {
       },
     ];
     const removeKeys = [keyValues[0].key, keyValues[2].key];
-    document.cookie = `${keyValues[1].key}=${keyValues[1].value}`;
+    document.cookie = `bs_${keyValues[1].key}=${keyValues[1].value}`;
 
     // act
     const data = (await this.storage.remove(removeKeys)) as Array<
