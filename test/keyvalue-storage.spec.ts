@@ -51,266 +51,188 @@ class KeyValueApiTests {
 }
 
 // session and local storage has similar api
-describe("KeyValue storage (localStorage and sessionStorage)", () => {
-  // 	describe("key/value api tests", () => {
-  // 		before(() => {
-  // 			stubs.defineWindow();
-  // 		});
+@suite("KeyValue storage: key/value set tests")
+class KeyValueSetTests {
+  private storage: BrowserStorage.IBrowserStorage;
 
-  // 		after(() => {
-  // 			stubs.undefineWindow();
-  // 		});
+  public static before() {
+    stubs.defineWindow();
+  }
 
-  // 		beforeEach(() => {
-  // 			stubs.defineStorage();
-  // 		});
+  public static after() {
+    stubs.undefineWindow();
+  }
 
-  // 		afterEach(() => {
-  // 			stubs.undefineStorage();
-  // 		});
+  public before() {
+    stubs.defineStorage();
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Local);
+  }
 
-  // 		it("can get storage api", () => {
-  // 			// act
-  // 			let localStorage = BrowserStorageFactory.getStorage(StorageType.Local);
-  // 			let sessionStorage = BrowserStorageFactory.getStorage(StorageType.Session);
+  public after() {
+    stubs.undefineStorage();
+  }
 
-  // 			// assert
-  // 			localStorage.should.not.be.null();
-  // 			sessionStorage.should.not.be.null();
-  // 		});
+  @test("can set a simple value")
+  public async canSetSimpleValueTest(): Promise<any> {
+    // arrange
+    let key = "key";
+    let value = "value";
+    let setSpy = sinon.spy(window.localStorage, "setItem");
 
-  // 		it("uses localstorage as default", () => {
-  // 			// arrange
-  // 			let storage = BrowserStorageFactory.getStorage();
+    // act
+    await this.storage.set<string>({ key: key, value: value });
 
-  // 			// assert
-  // 			storage.should.not.be.null();
-  // 			storage.should.be.instanceof(KeyValueStorage);
-  // 		});
-  // 	});
+    // assert
+    setSpy.calledOnce.should.be.true();
+    setSpy.calledWith(`bs_${key}`, value).should.be.true();
+  }
 
-  xdescribe("key/value set tests", () => {
-    let storage: BrowserStorage.IBrowserStorage;
+  @test("can set a complex value")
+  public async canSetComplexValue() {
+    const key = "key";
+    const value: { value1: number; value2: string; value3: Array<number> } = {
+      value1: 1,
+      value2: "test",
+      value3: [2],
+    };
+    let setSpy = sinon.spy(window.localStorage, "setItem");
 
-    before(() => {
-      stubs.defineWindow();
+    // act
+    await this.storage.set<{
+      value1: number;
+      value2: string;
+      value3: Array<number>;
+    }>({
+      key: key,
+      value: value,
     });
 
-    after(() => {
-      stubs.undefineWindow();
-    });
+    // assert
+    setSpy.calledOnce.should.be.true();
+    setSpy.calledWith(`bs_${key}`, JSON.stringify(value)).should.be.true();
+  }
 
-    beforeEach(() => {
-      stubs.defineStorage();
-      storage = BrowserStorageFactory.getStorage(StorageType.Local);
-    });
-
-    afterEach(() => {
-      stubs.undefineStorage();
-    });
-
-    it("can set a simple value", (done: Mocha.Done) => {
-      // arrange
-      let key = "key";
-      let value = "value";
-      let setSpy = sinon.spy(window.localStorage, "setItem");
-
-      // act
-      storage
-        .set<string>({ key: key, value: value })
-        .then((data: BrowserStorage.KeyValueOrError<string>) => {
-          // assert
-          setSpy.calledOnce.should.be.true();
-          setSpy.calledWith(key, value).should.be.true();
-          done();
-        });
-    });
-
-    it("can set simple values", (done: Mocha.Done) => {
-      // arrange
-      let data = [
-        { key: "test", value: 1 },
-        { key: "test2", value: 2 },
-        { key: "test3", value: 3 },
-      ];
-      let setSpy = sinon.spy(window.localStorage, "setItem");
-
-      // act
-      storage
-        .set<number>(data)
-        .then((values: Array<BrowserStorage.KeyValueOrError<number>>) => {
-          // assert
-          setSpy.calledThrice.should.be.true();
-          setSpy
-            .calledWith(data[0].key, data[0].value.toString())
-            .should.be.true();
-          setSpy
-            .calledWith(data[1].key, data[1].value.toString())
-            .should.be.true();
-          setSpy
-            .calledWith(data[2].key, data[2].value.toString())
-            .should.be.true();
-          done();
-        });
-    });
-
-    it("can set a complex value", (done: Mocha.Done) => {
-      // arrange
-      let value: { value1: number; value2: string; value3: Array<number> } = {
+  @test("can set complex values")
+  public async canSetComplexValues() {
+    // arrange
+    const keys = ["key1", "key2", "key3"];
+    const values: Array<{
+      value1: number;
+      value2: string;
+      value3: Array<number>;
+    }> = [
+      {
         value1: 1,
         value2: "test",
         value3: [2],
-      };
-      let setSpy = sinon.spy(window.localStorage, "setItem");
+      },
+      {
+        value1: 2,
+        value2: "test2",
+        value3: [3, 2],
+      },
+      {
+        value1: 3,
+        value2: "test3",
+        value3: [3, 2, 5, 4, 1],
+      },
+    ];
+    let setSpy = sinon.spy(window.localStorage, "setItem");
 
+    // act
+    await this.storage.set<{
+      value1: number;
+      value2: string;
+      value3: Array<number>;
+    }>([
+      {
+        key: keys[0],
+        value: values[0],
+      },
+      {
+        key: keys[1],
+        value: values[1],
+      },
+      {
+        key: keys[2],
+        value: values[2],
+      },
+    ]);
+
+    // assert
+    setSpy.calledThrice.should.be.true();
+    setSpy
+      .calledWith(`bs_${keys[0]}`, JSON.stringify(values[0]))
+      .should.be.true();
+    setSpy
+      .calledWith(`bs_${keys[1]}`, JSON.stringify(values[1]))
+      .should.be.true();
+    setSpy
+      .calledWith(`bs_${keys[2]}`, JSON.stringify(values[2]))
+      .should.be.true();
+  }
+
+  @test("will fail to set a value")
+  public async willFailSetValue() {
+    // arrange
+    let key = "key";
+    let value = "value";
+    let setMock = sinon.mock(window.localStorage);
+    setMock.expects("setItem").throws("Error");
+
+    try {
       // act
-      storage
-        .set<{ value1: number; value2: string; value3: Array<number> }>({
-          key: "test",
-          value: value,
-        })
-        .then(
-          (
-            data: BrowserStorage.KeyValueOrError<{
-              value1: number;
-              value2: string;
-              value3: Array<number>;
-            }>
-          ) => {
-            // assert
-            setSpy.calledOnce.should.be.true();
-            setSpy
-              .calledWith(data.key, JSON.stringify(data.value))
-              .should.be.true();
-            done();
-          }
-        );
-    });
-
-    it("can set complex values", (done: Mocha.Done) => {
-      // arrange
-      let values: Array<{
-        value1: number;
-        value2: string;
-        value3: Array<number>;
-      }> = [
-        {
-          value1: 1,
-          value2: "test",
-          value3: [2],
-        },
-        {
-          value1: 2,
-          value2: "test2",
-          value3: [3, 2],
-        },
-        {
-          value1: 3,
-          value2: "test3",
-          value3: [3, 2, 5, 4, 1],
-        },
-      ];
-      let setSpy = sinon.spy(window.localStorage, "setItem");
-
-      // act
-      storage
-        .set<{ value1: number; value2: string; value3: Array<number> }>([
-          {
-            key: "test",
-            value: values[0],
-          },
-          {
-            key: "test2",
-            value: values[1],
-          },
-          {
-            key: "test3",
-            value: values[2],
-          },
-        ])
-        .then(
-          (
-            data: Array<
-              BrowserStorage.KeyValueOrError<{
-                value1: number;
-                value2: string;
-                value3: Array<number>;
-              }>
-            >
-          ) => {
-            // assert
-            setSpy.calledThrice.should.be.true();
-            setSpy
-              .calledWith(data[0].key, JSON.stringify(data[0].value))
-              .should.be.true();
-            setSpy
-              .calledWith(data[1].key, JSON.stringify(data[1].value))
-              .should.be.true();
-            setSpy
-              .calledWith(data[2].key, JSON.stringify(data[2].value))
-              .should.be.true();
-            done();
-          }
-        );
-    });
-
-    it("will fail to set a value", (done: Mocha.Done) => {
-      // arrange
-      let key = "key";
-      let value = "value";
-      let setMock = sinon.mock(window.localStorage);
-      setMock.expects("setItem").throws("Error");
-
-      // act
-      storage
-        .set<string>({ key: key, value: value })
-        .catch((reason: BrowserStorage.KeyValueOrError<string>) => {
-          // assert
-          reason.key.should.equal(key);
-          reason.error.should.not.be.empty();
-          done();
-        });
+      await this.storage.set<string>({ key: key, value: value });
+    } catch (ex: any) {
+      const reason = ex as BrowserStorage.KeyValueOrError<string>;
 
       // assert
-      setMock.verify();
-    });
+      reason.key.should.equal(key);
+      reason.error.should.not.be.empty();
+    }
 
-    it("will fail to set some values", (done: Mocha.Done) => {
-      // arrange
-      let data = [
-        {
-          key: "key1",
-          value: "value1",
-        },
-        {
-          key: "key2",
-          value: "value2",
-        },
-        {
-          key: "key3",
-          value: "value3",
-        },
-      ];
-      let setStub = sinon.stub(window.localStorage, "setItem");
-      setStub.withArgs(data[1].key, data[1].value).throws("Error");
+    // assert
+    setMock.verify();
+  }
 
-      // act
-      storage
-        .set<string>(data)
-        .then((setData: Array<BrowserStorage.KeyValueOrError<string>>) => {
-          // assert
-          setStub.calledThrice.should.be.true();
-          setData[0].key.should.equal(data[0].key);
-          setData[0].value.should.equal(data[0].value);
-          setData[1].key.should.equal(data[2].key);
-          setData[1].value.should.equal(data[2].value);
-          setData[2].key.should.equal(data[1].key);
-          setData[2].error.should.not.be.empty();
-          done();
-        });
-    });
-  });
+  @test("will fail to set some values")
+  public async willFailSetSomeValues() {
+    // arrange
+    let values = [
+      {
+        key: "key1",
+        value: "value1",
+      },
+      {
+        key: "key2",
+        value: "value2",
+      },
+      {
+        key: "key3",
+        value: "value3",
+      },
+    ];
+    let setStub = sinon.stub(window.localStorage, "setItem");
+    setStub.withArgs(`bs_${values[1].key}`, values[1].value).throws("Error");
 
+    // act
+    const data = (await this.storage.set(values)) as Array<
+      BrowserStorage.KeyValueOrError<string>
+    >;
+
+    // assert
+    setStub.calledThrice.should.be.true();
+    data[0].key.should.equal(values[0].key);
+    data[0].value.should.equal(values[0].value);
+    data[1].key.should.equal(values[2].key);
+    data[1].value.should.equal(values[2].value);
+    data[2].key.should.equal(values[1].key);
+    data[2].error.should.not.be.empty();
+  }
+}
+
+// session and local storage has similar api
+describe("KeyValue storage (localStorage and sessionStorage)", () => {
   xdescribe("key/value get tests", () => {
     let storage: BrowserStorage.IBrowserStorage;
 

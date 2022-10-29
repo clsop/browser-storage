@@ -14,19 +14,6 @@ export default class KeyValueStorage
     this.storage = storage;
   }
 
-  // private parseValue<V extends Object | number | string>(rawValue: any): V {
-  // 	let value: V = null;
-
-  // 	try {
-  // 		value = JSON.parse(rawValue);
-  // 	} catch (ex) {
-  // 		// if not json use the raw value
-  // 		value = rawValue;
-  // 	}
-
-  // 	return value;
-  // }
-
   public get<V extends Object | number | string>(
     key: string | Array<string>
   ): Promise<
