@@ -1,14 +1,14 @@
 declare namespace BrowserStorage {
+	type SameSite  = "lax" | "strict" | "none";
+	type Storage = IBrowserStorage | ICookieStorage;
+
 	class BrowserStorageFactory {
-		public static getStorage(type?: StorageType): IBrowserStorage;
+		public static getStorage(type?: StorageType): Storage;
 	}
 
-	interface IBrowserStorage {
+	interface IBaseBrowserStorage {
 		// get
 		get<V extends Object | number | string>(key: string | Array<string>): Promise<KeyValueOrError<V> | Array<KeyValueOrError<V>>>;
-
-		// set
-		set<V extends Object | number | string>(data: KeyValue<V> | Array<KeyValue<V>>): Promise<KeyValueOrError<V> | Array<KeyValueOrError<V>>>;
 
 		// count
 		count(): Promise<ValueOrError<number>>;
@@ -16,6 +16,29 @@ declare namespace BrowserStorage {
 		// delete
 		remove(key: string | Array<string>): Promise<KeyValueOrError<void> | Array<KeyValueOrError<void>>>;
 		clear(): Promise<ValueOrError<void>>;
+	}
+
+	interface IBrowserStorage extends IBaseBrowserStorage {
+		// set
+		set<V extends Object | number | string>(data: KeyValue<V> | Array<KeyValue<V>>): Promise<KeyValueOrError<V> | Array<KeyValueOrError<V>>>;
+	}
+
+	interface ICookieStorage extends IBaseBrowserStorage {
+		// set
+		set<V extends Object | number | string, ICookieOptions>(data: KeyValue<V> | Array<KeyValue<V>>, options?: ICookieOptions): Promise<KeyValueOrError<V> | Array<KeyValueOrError<V>>>;
+	}
+
+	interface IApiOptions<T> {
+		create(value: T): string;
+	}
+
+	interface ICookieOptions {
+		path?: string;
+		domain?: string;
+		maxAge?: number;
+		expires?: Date;
+		secure?: boolean;
+		sameSite?: SameSite;
 	}
 
 	enum StorageType {

@@ -1,4 +1,5 @@
 import * as sinon from 'sinon';
+import KeyValueStorage from '../src/storage/keyvalue-storage';
 
 const defineWindow = () => Object.defineProperty(global, 'window', {
 	value: Object.create(null),
@@ -12,29 +13,45 @@ const defineDocument = () => Object.defineProperty(global, 'document', {
 	enumerable: true,
 	writable: true
 });
-// simple cookie implementation with test doubles
+// simple cookie test doubles
 const defineCookie = () => {
-	let getStub: sinon.SinonStub = null;
-	let setSpy: sinon.SinonSpy = null;
-	
+	let getStub: sinon.SinonStub<[], any> = null;
+	let setStub: sinon.SinonStub<[v: any], void> = null;
+	let clearCookies: Function = null;
+
 	Object.defineProperty(global.document, "cookie", (() => {
 		let self: PropertyDescriptor = <PropertyDescriptor>this;
 		let cookies: string[] = [];
 
-		self.set = (value: string) => cookies.push(value);
+		self.set = (value: string) => {
+			let maxAgeIndex = value.indexOf('max-age=0')
+			
+			if (maxAgeIndex !== -1) {
+				const key= value.split(/\s*=\s*/)[0];
+				const cookieIndex = cookies.indexOf(cookies.find(x => x.indexOf(`${key}=`) !== -1));
+
+				if (cookieIndex >= 0) {
+					cookies.splice(cookieIndex, 1);
+				}
+			} else {
+				cookies.push(value);
+			}
+		};
 		self.get = () => cookies.join("\r");
 		self.configurable = true;
 		self.enumerable = true;
 
 		getStub = sinon.stub(self, "get").callThrough();
-		setSpy = sinon.stub(self, "set").callThrough();
+		setStub = sinon.stub(self, "set").callThrough();
+		clearCookies = () => cookies.splice(0, cookies.length);
 
 		return this;
 	})());
 
 	return {
 		getStub: getStub,
-		setSpy: setSpy
+		setStub: setStub,
+		clear: clearCookies
 	};
 };
 const defineStorage = () => {
@@ -75,6 +92,18 @@ const defineStorage = () => {
 			configurable: true,
 			enumerable: true,
 			writable: false
+		},
+		'key': {
+			value: () => { },
+			configurable: true,
+			enumerable: true,
+			writable: false
+		},
+		'length': {
+			value: 0,
+			configurable: true,
+			enumerable: true,
+			writable: true
 		}
 	};
 	Object.defineProperties(global.window.localStorage, propDefs);

@@ -1,5 +1,4 @@
 import 'should';
-import { describe, before, after } from 'mocha';
 import { suite, test } from '@testdeck/mocha';
 
 import stubs from './stubs';
@@ -7,8 +6,8 @@ import { BrowserStorageFactory } from '../src/browser-storage-factory';
 import CookieStorage from '../src/storage/cookie-storage';
 import KeyValueStorage from '../src/storage/keyvalue-storage';
 import IndexedDbStorage from '../src/storage/indexeddb-storage';
-
 import { StorageType } from '../src/storage-type';
+import BrowserApiError from '../src/exceptions/browser-api-error';
 
 @suite("Api fallbacks: local storage api tests")
 class LocalStorageApiTests {
@@ -70,7 +69,7 @@ class CookieStorageApiTests {
 		stubs.undefineWindow();
 	}
 
-	@test("cookie fallback to error")
+	@test("cookie fallback to unsupported")
 	public fallbackToErrorTest() {
 		// arrange
 		let expectation = () => {
@@ -78,7 +77,7 @@ class CookieStorageApiTests {
 		};
 
 		// act, assert
-		expectation.should.throw(Error);
+		expectation.should.throw(BrowserApiError);
 	}
 }
 

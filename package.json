@@ -29,14 +29,20 @@
       "text",
       "text-summary"
     ],
-    "report-dir": "coverage"
+    "report-dir": "coverage",
+    "branches": 80,
+    "lines": 80,
+    "functions": 60,
+    "statements": 80
   },
   "scripts": {
-    "build": "pnpm build-cjs && pnpm build-esm",
+    "build": "npm run build-cjs && npm run build-esm",
+    "build:pnpm": "pnpm build-cjs && pnpm build-esm",
     "build-cjs": "tsc -p tsconfig/tsconfig.cjs.json",
     "build-esm": "tsc -p tsconfig/tsconfig.esm.json",
     "test": "mocha",
-    "test:coverage": "nyc pnpm test"
+    "test:coverage": "nyc npm test",
+    "test:pnpm:coverage": "nyc pnpm test"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",

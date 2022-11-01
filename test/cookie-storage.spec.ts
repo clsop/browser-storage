@@ -1,213 +1,602 @@
-import 'should';
-import * as sinon from 'sinon';
-import { before, beforeEach, after, afterEach } from 'mocha';
+import "should";
+import * as sinon from "sinon";
+import { suite, test, timeout } from "@testdeck/mocha";
 
-import stubs from './stubs';
-import { StorageType } from '../src/storage-type';
-import { BrowserStorageFactory } from '../src/browser-storage-factory';
-import KeyValueStorage from '../src/storage/keyvalue-storage';
-import BrowserStorage from '../typings/browser-storage';
+import stubs from "./stubs";
+import { StorageType } from "../src/storage-type";
+import { BrowserStorageFactory } from "../src/browser-storage-factory";
+import BrowserStorage from "../typings/browser-storage";
+import CookieOptions from "../src/cookie-options";
 
-describe('Cookie storage', () => {
-	const COOKIE_PART = "; expires=Tue, 19 Jan 2038 03:14:07 GMT; path=/";
+type TestObj = { test: string; num: number; decimal: number };
+type CookieFakes = {
+  getStub: sinon.SinonStub<[], any>;
+  setStub: sinon.SinonStub<[v: any], void>;
+  clear: Function;
+};
 
-	describe("cookie api tests", () => {
-		before(() =>  {
-			stubs.defineDocument();
-		});
+@suite("Cookie storage: cookie api tests")
+class CookieApiTests {
+  public static before() {
+    stubs.defineDocument();
+  }
 
-		after(() => {
-			stubs.undefineDocument();
-		});
+  public static after() {
+    stubs.undefineDocument();
+  }
 
-		beforeEach(() => {
-			stubs.defineCookie();
-		});
+  public before() {
+    stubs.defineCookie();
+  }
 
-		afterEach(() => {
-			stubs.undefineCookie();
-		});
+  public after() {
+    stubs.undefineCookie();
+  }
 
-		it("can get storage api", () => {
-			// act
-			let storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
+  @test("can get storage api")
+  public canGetApiTest() {
+    // act
+    let storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
 
-			// assert
-			storage.should.not.be.null();
-		});
-	});
+    // assert
+    storage.should.not.be.null();
+  }
+}
 
-	describe("cookie set tests", () => {
-		let storage: BrowserStorage.IBrowserStorage;
-		let cookieFakes: any;
+@suite("Cookie storage: cookie set tests")
+class CookieSetTests {
+  private static storage: BrowserStorage.IBrowserStorage;
+  private static cookieFakes: CookieFakes;
+  private static cookieOptions: CookieOptions<any>;
 
-		before(() => {
-			stubs.defineDocument();
-			cookieFakes = stubs.defineCookie();
-			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
-		});
+  public static before() {
+    stubs.defineDocument();
+    CookieSetTests.cookieFakes = stubs.defineCookie();
+    CookieSetTests.storage = BrowserStorageFactory.getStorage(
+      StorageType.Cookie
+    );
+    CookieSetTests.cookieOptions = new CookieOptions();
+  }
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-		});
+  public static after() {
+    stubs.undefineCookie();
+    stubs.undefineDocument();
+  }
 
-		afterEach(() => {
-			cookieFakes.getStub.resetHistory();
-			cookieFakes.setSpy.resetHistory();
-		});
+  public after() {
+    CookieSetTests.cookieFakes.getStub.resetHistory();
+    CookieSetTests.cookieFakes.setStub.resetHistory();
+  }
 
-		it("can set a simple value", (done: Mocha.Done) => {
-			// arrange
-			let key = 'key';
-			let value = 'value';
+  @test("can set a simple value")
+  public async canSetSimpleValueTest(): Promise<any> {
+    // arrange
+    const key = "key";
+    const value = "value";
 
-			// act
-			storage.set<string>({ key: key, value: value })
-				.then((data: BrowserStorage.KeyValueOrError<string>) => {
-				// assert
-				cookieFakes.setSpy.calledOnce.should.be.true();
-				cookieFakes.setSpy
-					.calledWithExactly(`${data.key}=${JSON.stringify(data.value)}${COOKIE_PART}`)
-					.should.be.true();
+    // act
+    const data = (await CookieSetTests.storage.set<string>({
+      key: key,
+      value: value,
+    })) as BrowserStorage.KeyValueOrError<string>;
+    const cookie = CookieSetTests.cookieOptions.create({
+      key: `bs_${data.key}`,
+      value: data.value,
+    });
 
-				done();
-			});
-		});
+    // assert
+    CookieSetTests.cookieFakes.setStub.calledOnce.should.be.true();
+    CookieSetTests.cookieFakes.setStub
+      .calledWithExactly(cookie)
+      .should.be.true();
+  }
 
-		it("can set a simple values", (done: Mocha.Done) => {
-			// arrange
-			let keys = ['key1', 'key2'];
-			let values = ['value1', 'value2'];
+  @test("will prefix cookies set through api")
+  public async willPrefixCookieTest(): Promise<any> {
+    // arrange
+    const key = "key";
+    const value = "value";
 
-			// act
-			storage.set<string>([{ key: keys[0], value: values[0] }, { key: keys[1], value: values[1] }])
-				.then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
-				// assert
-				cookieFakes.setSpy.calledTwice.should.be.true();
-				cookieFakes.setSpy
-					.calledWithExactly(`${data[0].key}=${JSON.stringify(data[0].value)}${COOKIE_PART}`)
-					.should.be.true();
-				cookieFakes.setSpy
-					.calledWithExactly(`${data[1].key}=${JSON.stringify(data[1].value)}${COOKIE_PART}`)
-					.should.be.true();
+    // act
+    const data = (await CookieSetTests.storage.set<string>({
+      key: key,
+      value: value,
+    })) as BrowserStorage.KeyValueOrError<string>;
+    const cookie = CookieSetTests.cookieOptions.create({
+      key: `bs_${data.key}`,
+      value: data.value,
+    });
 
-				done();
-			});
-		});
+    // assert
+    CookieSetTests.cookieFakes.setStub
+      .calledWithExactly(cookie)
+      .should.be.true();
+  }
 
-		it("can set a complex value", (done: Mocha.Done) => {
-			// arrange
-			let key = 'key';
-			let value = { test: "test", num: 2, decimal: 23.45 };
+  @test("can set simple values")
+  public async canSetSimpleValuesTest(): Promise<any> {
+    // arrange
+    const keys = ["key1", "key2"];
+    const values = ["value1", "value2"];
 
-			// act
-			storage.set<{ test: string, num: number, decimal: number }>({ key: key, value: value })
-				.then((data: BrowserStorage.KeyValueOrError<{ test: string, num: number, decimal: number }>) => {
-				// assert
-				cookieFakes.setSpy.calledOnce.should.be.true();
-				cookieFakes.setSpy
-					.calledWithExactly(`${key}=${JSON.stringify(value)}${COOKIE_PART}`)
-					.should.be.true();
+    // act
+    const data = (await CookieSetTests.storage.set<string>([
+      { key: keys[0], value: values[0] },
+      { key: keys[1], value: values[1] },
+    ])) as Array<BrowserStorage.KeyValueOrError<string>>;
+    const cookies = data.map((d) =>
+      CookieSetTests.cookieOptions.create({ key: d.key, value: d.value })
+    );
 
-				done();
-			});
-		});
+    // assert
+    CookieSetTests.cookieFakes.setStub.calledTwice.should.be.true();
+    CookieSetTests.cookieFakes.setStub
+      .calledWithExactly(cookies[0])
+      .should.be.true();
+    CookieSetTests.cookieFakes.setStub
+      .calledWithExactly(cookies[1])
+      .should.be.true();
+  }
 
-		it("can set complex values", (done: Mocha.Done) => {
-			// arrange
-			let data = [{
-				key: "key1", value: { ping: { on: false, time: 2 }, clock: { hour: 1, minute: 22, sec: 55 } }
-			}, {
-				key: "key2", value: { ping: { on: true, time: 3 }, clock: { hour: 3, minute: 2, sec: 34 } }
-			}];
+  @test("can set a complex value")
+  public async canSetComplexValueTest(): Promise<any> {
+    // arrange
+    const key = "key";
+    const value: TestObj = { test: "test", num: 2, decimal: 23.45 };
 
-			// act
-			storage.set<{ ping: { on: boolean, time: number }, clock: { hour: number, minute: number, sec: number } }>(data)
-				.then((setData: Array<BrowserStorage.KeyValueOrError<{ ping: { on: boolean, time: number }, clock: { hour: number, minute: number, sec: number } }>>) => {
-					// assert
-					cookieFakes.setSpy.calledTwice.should.be.true();
-					cookieFakes.setSpy
-						.calledWithExactly(`${data[0].key}=${JSON.stringify(data[0].value)}${COOKIE_PART}`)
-						.should.be.true();
-					cookieFakes.setSpy
-						.calledWithExactly(`${data[1].key}=${JSON.stringify(data[1].value)}${COOKIE_PART}`)
-						.should.be.true();
-					done();
-				});
-		});
+    // act
+    const data = (await CookieSetTests.storage.set<TestObj>({
+      key: key,
+      value: value,
+    })) as BrowserStorage.KeyValueOrError<TestObj>;
+    const cookie = CookieSetTests.cookieOptions.create({
+      key: `bs_${data.key}`,
+      value: data.value,
+    });
 
-		it.skip("will fail to set a value");
+    // assert
+    CookieSetTests.cookieFakes.setStub.calledOnce.should.be.true();
+    CookieSetTests.cookieFakes.setStub
+      .calledWithExactly(cookie)
+      .should.be.true();
+  }
 
-		it.skip("will fail to set some values");
-	});
+  @test("can set complex values")
+  public async canSetComplexValues(): Promise<any> {
+    // arrange
+    const values: Array<{ key: string; value: TestObj }> = [
+      {
+        key: "key1",
+        value: { test: "test", num: 2, decimal: 24.32 },
+      },
+      {
+        key: "key2",
+        value: { test: "test2", num: 4, decimal: 46.23 },
+      },
+    ];
 
-	describe("cookie get tests", () => {
-		let storage: BrowserStorage.IBrowserStorage;
+    // act
+    const data = (await CookieSetTests.storage.set<TestObj>(values)) as Array<
+      BrowserStorage.KeyValueOrError<TestObj>
+    >;
+    const cookies = data.map((d) =>
+      CookieSetTests.cookieOptions.create({ key: d.key, value: d.value })
+    );
 
-		before(() => {
-			stubs.defineDocument();
-			stubs.defineCookie();
-			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
-		});
+    // assert
+    CookieSetTests.cookieFakes.setStub.calledTwice.should.be.true();
+    CookieSetTests.cookieFakes.setStub.calledWith(cookies[0]).should.be.true();
+    CookieSetTests.cookieFakes.setStub.calledWith(cookies[1]).should.be.true();
+  }
+}
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-		});
+@suite("Cookie storage: cookie get tests")
+class CookieGetTests {
+  private storage: BrowserStorage.IBrowserStorage;
+  private static cookieFakes: CookieFakes;
+  private static cookieOptions: CookieOptions<any>;
 
-		it.skip("can get a simple value");
+  public static before() {
+    stubs.defineDocument();
+    CookieGetTests.cookieFakes = stubs.defineCookie();
+    CookieGetTests.cookieOptions = new CookieOptions();
+  }
 
-		it.skip("can get simple values");
+  public static after() {
+    stubs.undefineCookie();
+    stubs.undefineDocument();
+  }
 
-		it.skip("can get a complex value");
+  public before() {
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
+  }
 
-		it.skip("can get complex values");
+  public after() {
+    CookieGetTests.cookieFakes.getStub.resetHistory();
+    CookieGetTests.cookieFakes.setStub.resetHistory();
+    CookieGetTests.cookieFakes.clear();
+  }
 
-		it.skip("will fail to get a value");
+  @test("can get a simple value")
+  public async canGetSimpleValueTest(): Promise<any> {
+    // arrange
+    const key = "key";
+    const value = "value";
+    document.cookie = `bs_${key}="${value}"`;
 
-		it.skip("will fail to get some values");
-	});
+    // act
+    const data = (await this.storage.get<string>(
+      key
+    )) as BrowserStorage.KeyValueOrError<string>;
 
-	describe("cookie remove tests", () => {
-		let storage: BrowserStorage.IBrowserStorage;
+    // assert
+    CookieGetTests.cookieFakes.getStub.called.should.be.true();
+    data.key.should.be.equal(key);
+    data.value.should.be.equal(value);
+  }
 
-		before(() => {
-			stubs.defineDocument();
-			stubs.defineCookie();
-			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
-		});
+  @test("can get a complex value")
+  public async canGetSimpleComplexValueTest(): Promise<any> {
+    // arrange
+    const key = "key";
+    const value: TestObj = { decimal: 34.2, num: 3, test: "test" };
+    document.cookie = `bs_${key}=${JSON.stringify(value)}`;
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-		});
+    // act
+    const data = (await this.storage.get<TestObj>(
+      key
+    )) as BrowserStorage.KeyValueOrError<TestObj>;
 
-		it.skip("can remove a value");
+    // assert
+    CookieGetTests.cookieFakes.getStub.called.should.be.true();
+    data.value.should.containDeep(value);
+  }
 
-		it.skip("can remove some values");
+  @test("can get complex values")
+  public async canGetComplexValuesTest(): Promise<any> {
+    // arrange
+    const keys = ["key", "key2"];
+    const values: Array<TestObj> = [
+      { decimal: 34.2, num: 3, test: "test" },
+      { decimal: 53.7, num: 4, test: "test2" },
+    ];
 
-		it.skip("will fail to remove value");
+    for (let i in keys) {
+      document.cookie = `bs_${keys[i]}=${JSON.stringify(values[i])}`;
+    }
 
-		it.skip("will fail to remove values");
-	});
+    // act
+    const data = (await this.storage.get<TestObj>(keys)) as Array<
+      BrowserStorage.KeyValueOrError<TestObj>
+    >;
 
-	describe("cookie clear tests", () => {
-		let storage: BrowserStorage.IBrowserStorage;
+    // assert
+    CookieGetTests.cookieFakes.getStub.called.should.be.true();
+    data.should.be.Array();
 
-		before(() => {
-			stubs.defineDocument();
-			stubs.defineCookie();
-			storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
-		});
+    const resultKeys = data.map((x) => x.key);
+    resultKeys.should.have.length(keys.length);
+    resultKeys.should.containDeep(keys);
+    data.map((x) => x.value).should.containDeep(values);
+  }
 
-		after(() => {
-			stubs.undefineCookie();
-			stubs.undefineDocument();
-		});
+  @test("will fail to get a value")
+  public async willFailValueTest(): Promise<any> {
+    // arrange
+    const key = "key";
 
-		it.skip("can clear the storage");
+    try {
+      // act
+      await this.storage.get<TestObj>(key);
+    } catch (err: any) {
+      // assert
+      const error = err as BrowserStorage.KeyValueOrError<TestObj>;
+      error.error.should.not.be.null();
+    }
+  }
 
-		it.skip("will fail to clear the storage");
-	});
-});
+  @test("will fail to get some values")
+  public async willFailValuesTest(): Promise<any> {
+    // arrange
+    const keys = ["key", "key2"];
+    document.cookie = `bs_${keys[0]}=${JSON.stringify({
+      decimal: 2.2,
+      num: 33,
+      test: "valid",
+    })}`;
+
+    // act
+    const data = (await this.storage.get<TestObj>(keys)) as Array<
+      BrowserStorage.KeyValueOrError<TestObj>
+    >;
+
+    // assert
+    data[0].key.should.be.equal(keys[0]);
+    data[0].value.should.not.be.null();
+    data[1].key.should.be.equal(keys[1]);
+    data[1].error.should.not.be.null();
+  }
+}
+
+@suite("Cookie storage: cookie remove tests")
+class CookieRemoveTests {
+  private storage: BrowserStorage.IBrowserStorage;
+  private static cookieFakes: CookieFakes;
+
+  public static before() {
+    stubs.defineDocument();
+    CookieRemoveTests.cookieFakes = stubs.defineCookie();
+  }
+
+  public static after() {
+    stubs.undefineCookie();
+    stubs.undefineDocument();
+  }
+
+  public before() {
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
+  }
+
+  public after() {
+    CookieRemoveTests.cookieFakes.getStub.resetHistory();
+    CookieRemoveTests.cookieFakes.setStub.resetHistory();
+    CookieRemoveTests.cookieFakes.clear();
+  }
+
+  @test("can remove a value")
+  public async canRemoveValueTest(): Promise<any> {
+    // arrange
+    const key = "key";
+    const value = "value";
+    document.cookie = `bs_${key}=${JSON.stringify(value)}`;
+
+    // act
+    const data = (await this.storage.remove(
+      key
+    )) as BrowserStorage.KeyValueOrError<void>;
+
+    // assert
+    CookieRemoveTests.cookieFakes.setStub.called.should.be.true();
+    data.key.should.be.equal(key);
+    document.cookie.should.not.be.containEql(`${data.key}=${data.value}`);
+  }
+
+  @test("can remove some values")
+  public async canRemoveValuesTest(): Promise<any> {
+    // arrange
+    const keyValues: Array<BrowserStorage.KeyValue<string>> = [
+      {
+        key: "key",
+        value: "value",
+      },
+      {
+        key: "key1",
+        value: "value1",
+      },
+      {
+        key: "key2",
+        value: "value2",
+      },
+    ];
+    const removeKeys = [keyValues[0].key, keyValues[2].key];
+    keyValues.forEach(
+      (x) => (document.cookie = `bs_${x.key}=${JSON.stringify(x.value)}`)
+    );
+
+    // act
+    const data = (await this.storage.remove(removeKeys)) as Array<
+      BrowserStorage.KeyValueOrError<void>
+    >;
+
+    // assert
+    const keys = data.map((x) => x.key);
+    CookieRemoveTests.cookieFakes.setStub.called.should.be.true();
+    keys.should.be.deepEqual(removeKeys);
+
+    for (let key of removeKeys) {
+      document.cookie.should.not.be.containEql(
+        `bs_${key}=${data.find((x) => x.key == key).value}`
+      );
+    }
+  }
+
+  @test("will fail to remove value")
+  public async willFailRemoveValueTest(): Promise<any> {
+    // arrange
+    const key = "key";
+
+    // act
+    try {
+      await this.storage.remove(key);
+    } catch (err: any) {
+      const data = err as BrowserStorage.KeyValueOrError<void>;
+
+      // assert
+      CookieRemoveTests.cookieFakes.setStub.called.should.not.be.true();
+      data.key.should.be.equal(key);
+      data.error.should.not.be.undefined();
+    }
+  }
+
+  @test("will fail to remove some values")
+  public async willFailRemoveValuesTest(): Promise<any> {
+    // arrange
+    const keyValues: Array<BrowserStorage.KeyValue<string>> = [
+      {
+        key: "key",
+        value: "value",
+      },
+      {
+        key: "key1",
+        value: "value1",
+      },
+      {
+        key: "key2",
+        value: "value2",
+      },
+    ];
+    const removeKeys = [keyValues[0].key, keyValues[2].key];
+    document.cookie = `bs_${keyValues[1].key}=${keyValues[1].value}`;
+
+    // act
+    const data = (await this.storage.remove(removeKeys)) as Array<
+      BrowserStorage.KeyValueOrError<void>
+    >;
+
+    // assert
+    document.cookie.should.be.containEql(
+      `${keyValues[1].key}=${keyValues[1].value}`
+    );
+
+    for (let valuePair of data) {
+      removeKeys.should.containEql(valuePair.key);
+      valuePair.error.should.not.be.undefined();
+    }
+  }
+}
+
+@suite("Cookie storage: cookie count tests")
+class CookieCountTests {
+  private storage: BrowserStorage.IBrowserStorage;
+  private static cookieFakes: CookieFakes;
+  private static cookieOptions: CookieOptions<any>;
+
+  public static before() {
+    stubs.defineDocument();
+    CookieCountTests.cookieFakes = stubs.defineCookie();
+    CookieCountTests.cookieOptions = new CookieOptions();
+  }
+
+  public static after() {
+    stubs.undefineCookie();
+    stubs.undefineDocument();
+  }
+
+  public before() {
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
+  }
+
+  public after() {
+    CookieCountTests.cookieFakes.getStub.resetHistory();
+    CookieCountTests.cookieFakes.setStub.resetHistory();
+    CookieCountTests.cookieFakes.clear();
+  }
+
+  @test("can count cookies")
+  public async canCountTest(): Promise<any> {
+    // arrange
+    const keys = ["test1", "test2"];
+    const values = ["value1", "value2"];
+    document.cookie = `bs_${keys[0]}=${values[0]}`;
+    document.cookie = `bs_${keys[1]}=${values[1]}`;
+
+    // act
+    const data = await this.storage.count();
+
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+
+  @test("can count cookies that consists of objects")
+  public async canCountObjectCookies(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = { test: "test" };
+    document.cookie = `bs_${keys[0]}=${JSON.stringify(value)}`;
+
+    // act
+    const data = await this.storage.count();
+
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+
+  @test("will only count storage entries")
+  public async willOnlyCountStorageTest(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = "value";
+    document.cookie = "test=test";
+    document.cookie = "some=other";
+    document.cookie = `bs_${keys[0]}=${value}`;
+
+    // act
+    const data = await this.storage.count();
+
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+}
+
+@suite("Cookie storage: cookie clear tests")
+class CookieClearTests {
+  private storage: BrowserStorage.IBrowserStorage;
+  private static cookieFakes: CookieFakes;
+  private static cookieOptions: CookieOptions<any>;
+
+  public static before() {
+    stubs.defineDocument();
+    CookieClearTests.cookieFakes = stubs.defineCookie();
+    CookieClearTests.cookieOptions = new CookieOptions();
+  }
+
+  public static after() {
+    stubs.undefineCookie();
+    stubs.undefineDocument();
+  }
+
+  public before() {
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
+  }
+
+  public after() {
+    CookieClearTests.cookieFakes.getStub.resetHistory();
+    CookieClearTests.cookieFakes.setStub.resetHistory();
+    CookieClearTests.cookieFakes.clear();
+  }
+
+  @test("can clear cookies")
+  public async canCountTest(): Promise<any> {
+    // arrange
+    const keys = ["test1", "test2"];
+    const values = ["value1", "value2"];
+    document.cookie = `bs_${keys[0]}=${values[0]}`;
+    document.cookie = `bs_${keys[1]}=${values[1]}`;
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    document.cookie.should.be.empty();
+  }
+
+  @test("will only cler storage cookies")
+  public async willClearStorageTest(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = "value";
+    document.cookie = "test=test";
+    document.cookie = "some=other";
+    document.cookie = `bs_${keys[0]}=${value}`;
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    document.cookie.should.not.containEql("bs_");
+  }
+
+  @test("can cler cookies that consists of objects")
+  public async canClearObjectCookieTest(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = { test: "test" };
+    document.cookie = `bs_${keys[0]}=${JSON.stringify(value)}`;
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    document.cookie.should.not.containEql("bs_");
+  }
+}
