@@ -22,14 +22,14 @@ export default class CookieStorage
 
     this.keySplit = /\s*=\s*/;
     this.cookies = {};
-    
+
     this.initializeCookies();
   }
 
   private initializeCookies(): Cookies {
     const rawCookies = document.cookie.split("\r");
 
-    if (rawCookies.length > 0 && rawCookies[0] !== '') {
+    if (rawCookies.length > 0 && rawCookies[0] !== "") {
       for (let i = 0; i < rawCookies.length; i++) {
         const rawCookie = rawCookies[i];
         let cookie: CookieObject = {};
@@ -72,6 +72,21 @@ export default class CookieStorage
     }
 
     return values;
+  }
+
+  private enumerateCookies(predicate: (key: string, value: any) => void): void {
+    const rawCookies = document.cookie.split("\r");
+
+    if (rawCookies.length > 0 && rawCookies[0] !== "") {
+      for (let i = 0; i < rawCookies.length; i++) {
+        const rawCookie = rawCookies[i];
+        const aCouples = rawCookie.split(this.keySplit);
+
+        if (aCouples.length > 1 && aCouples[0].startsWith("bs_")) {
+          predicate(aCouples[0], typeof aCouples[1] === "string" ? aCouples[1] : JSON.parse(aCouples[1]));
+        }
+      }
+    }
   }
 
   public get<V extends Object | number | string>(
@@ -183,7 +198,9 @@ export default class CookieStorage
         resolve: (value?: BrowserStorage.ValueOrError<number>) => void,
         reject: (reason?: BrowserStorage.ValueOrError<number>) => void
       ) => {
-        resolve({ value: document.cookie.split("/r").length });
+        let count: number = 0;
+        this.enumerateCookies((key, value) => count++);
+        resolve({ value: count });
       }
     );
   }
@@ -195,7 +212,7 @@ export default class CookieStorage
     | Array<BrowserStorage.KeyValueOrError<void>>
   > {
     var cookieOptions = new CookieOptions<void>({
-      maxAge: 0
+      maxAge: 0,
     });
 
     return new Promise<
@@ -221,13 +238,19 @@ export default class CookieStorage
 
             for (let index in keys) {
               this.foundOrNot<void>(keys[index], keyValues);
-              
+
               if (keyValues.length > 0) {
                 for (let valuePair of keyValues) {
-                  const keyValue: BrowserStorage.KeyValueOrError<void> = { key: valuePair.key, value: valuePair.value };
-                  
+                  const keyValue: BrowserStorage.KeyValueOrError<void> = {
+                    key: valuePair.key,
+                    value: valuePair.value,
+                  };
+
                   if (!keyValue.error) {
-                    document.cookie = cookieOptions.create({ key: keyValue.key, value: keyValue.value });
+                    document.cookie = cookieOptions.create({
+                      key: keyValue.key,
+                      value: keyValue.value,
+                    });
                   }
                 }
               }
@@ -237,9 +260,12 @@ export default class CookieStorage
           },
           (key: string) => {
             const valuePair = this.foundOrNot<void>(key, [])[0];
-            
+
             if (!valuePair.error) {
-              document.cookie = cookieOptions.create({ key: valuePair.key, value: valuePair.value });
+              document.cookie = cookieOptions.create({
+                key: valuePair.key,
+                value: valuePair.value,
+              });
               resolve(valuePair);
             } else {
               reject(valuePair);
@@ -256,8 +282,12 @@ export default class CookieStorage
         resolve: (value?: BrowserStorage.ValueOrError<void>) => void,
         reject: (reason?: BrowserStorage.ValueOrError<void>) => void
       ) => {
-        // TODO: clear all sp_ cookies
-        reject({ error: "cannot clear all cookies!" });
+        const cookieOptions = new CookieOptions<any>({ maxAge: 0 });
+        this.enumerateCookies(
+          (key, value) =>
+            (document.cookie = cookieOptions.create({ key: key, value: value }))
+        );
+        resolve();
       }
     );
   }

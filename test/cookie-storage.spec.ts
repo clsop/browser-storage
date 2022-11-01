@@ -208,9 +208,7 @@ class CookieGetTests {
   }
 
   public before() {
-    this.storage = BrowserStorageFactory.getStorage(
-      StorageType.Cookie
-    );
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
   }
 
   public after() {
@@ -225,7 +223,7 @@ class CookieGetTests {
     const key = "key";
     const value = "value";
     document.cookie = `bs_${key}="${value}"`;
-    
+
     // act
     const data = (await this.storage.get<string>(
       key
@@ -242,8 +240,8 @@ class CookieGetTests {
     // arrange
     const key = "key";
     const value: TestObj = { decimal: 34.2, num: 3, test: "test" };
-    document.cookie = `bs_${key}=${JSON.stringify(value)}`
-    
+    document.cookie = `bs_${key}=${JSON.stringify(value)}`;
+
     // act
     const data = (await this.storage.get<TestObj>(
       key
@@ -301,8 +299,12 @@ class CookieGetTests {
   public async willFailValuesTest(): Promise<any> {
     // arrange
     const keys = ["key", "key2"];
-    document.cookie = `bs_${keys[0]}=${JSON.stringify({ decimal: 2.2, num: 33, test: "valid" })}`;
-    
+    document.cookie = `bs_${keys[0]}=${JSON.stringify({
+      decimal: 2.2,
+      num: 33,
+      test: "valid",
+    })}`;
+
     // act
     const data = (await this.storage.get<TestObj>(keys)) as Array<
       BrowserStorage.KeyValueOrError<TestObj>
@@ -332,9 +334,7 @@ class CookieRemoveTests {
   }
 
   public before() {
-    this.storage = BrowserStorageFactory.getStorage(
-      StorageType.Cookie
-    );
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
   }
 
   public after() {
@@ -379,7 +379,9 @@ class CookieRemoveTests {
       },
     ];
     const removeKeys = [keyValues[0].key, keyValues[2].key];
-    keyValues.forEach((x) => (document.cookie = `bs_${x.key}=${JSON.stringify(x.value)}`));
+    keyValues.forEach(
+      (x) => (document.cookie = `bs_${x.key}=${JSON.stringify(x.value)}`)
+    );
 
     // act
     const data = (await this.storage.remove(removeKeys)) as Array<
@@ -450,5 +452,151 @@ class CookieRemoveTests {
       removeKeys.should.containEql(valuePair.key);
       valuePair.error.should.not.be.undefined();
     }
+  }
+}
+
+@suite("Cookie storage: cookie count tests")
+class CookieCountTests {
+  private storage: BrowserStorage.IBrowserStorage;
+  private static cookieFakes: CookieFakes;
+  private static cookieOptions: CookieOptions<any>;
+
+  public static before() {
+    stubs.defineDocument();
+    CookieCountTests.cookieFakes = stubs.defineCookie();
+    CookieCountTests.cookieOptions = new CookieOptions();
+  }
+
+  public static after() {
+    stubs.undefineCookie();
+    stubs.undefineDocument();
+  }
+
+  public before() {
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
+  }
+
+  public after() {
+    CookieCountTests.cookieFakes.getStub.resetHistory();
+    CookieCountTests.cookieFakes.setStub.resetHistory();
+    CookieCountTests.cookieFakes.clear();
+  }
+
+  @test("can count cookies")
+  public async canCountTest(): Promise<any> {
+    // arrange
+    const keys = ["test1", "test2"];
+    const values = ["value1", "value2"];
+    document.cookie = `bs_${keys[0]}=${values[0]}`;
+    document.cookie = `bs_${keys[1]}=${values[1]}`;
+
+    // act
+    const data = await this.storage.count();
+
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+
+  @test("can count cookies that consists of objects")
+  public async canCountObjectCookies(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = { test: "test" };
+    document.cookie = `bs_${keys[0]}=${JSON.stringify(value)}`;
+
+    // act
+    const data = await this.storage.count();
+
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+
+  @test("will only count storage entries")
+  public async willOnlyCountStorageTest(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = "value";
+    document.cookie = "test=test";
+    document.cookie = "some=other";
+    document.cookie = `bs_${keys[0]}=${value}`;
+
+    // act
+    const data = await this.storage.count();
+
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+}
+
+@suite("Cookie storage: cookie clear tests")
+class CookieClearTests {
+  private storage: BrowserStorage.IBrowserStorage;
+  private static cookieFakes: CookieFakes;
+  private static cookieOptions: CookieOptions<any>;
+
+  public static before() {
+    stubs.defineDocument();
+    CookieClearTests.cookieFakes = stubs.defineCookie();
+    CookieClearTests.cookieOptions = new CookieOptions();
+  }
+
+  public static after() {
+    stubs.undefineCookie();
+    stubs.undefineDocument();
+  }
+
+  public before() {
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Cookie);
+  }
+
+  public after() {
+    CookieClearTests.cookieFakes.getStub.resetHistory();
+    CookieClearTests.cookieFakes.setStub.resetHistory();
+    CookieClearTests.cookieFakes.clear();
+  }
+
+  @test("can clear cookies")
+  public async canCountTest(): Promise<any> {
+    // arrange
+    const keys = ["test1", "test2"];
+    const values = ["value1", "value2"];
+    document.cookie = `bs_${keys[0]}=${values[0]}`;
+    document.cookie = `bs_${keys[1]}=${values[1]}`;
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    document.cookie.should.be.empty();
+  }
+
+  @test("will only cler storage cookies")
+  public async willClearStorageTest(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = "value";
+    document.cookie = "test=test";
+    document.cookie = "some=other";
+    document.cookie = `bs_${keys[0]}=${value}`;
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    document.cookie.should.not.containEql("bs_");
+  }
+
+  @test("can cler cookies that consists of objects")
+  public async canClearObjectCookieTest(): Promise<any> {
+    // arrange
+    const keys = ["key"];
+    const value = { test: "test" };
+    document.cookie = `bs_${keys[0]}=${JSON.stringify(value)}`;
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    document.cookie.should.not.containEql("bs_");
   }
 }

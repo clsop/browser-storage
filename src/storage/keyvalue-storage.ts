@@ -170,15 +170,15 @@ export default class KeyValueStorage
       ) => {
         let count: number = 0;
 
-        for (let i = 0; i >= this.storage.length; i++) {
+        for (let i = 0; i < this.storage.length; i++) {
           const key = this.storage.key(i);
 
-          if (key.startsWith("sp_", 0)) {
+          if (key.startsWith("bs_", 0)) {
             count++;
           }
         }
 
-        resolve({ value: this.storage.length });
+        resolve({ value: count });
       }
     );
   }
@@ -266,10 +266,10 @@ export default class KeyValueStorage
       ) => {
         let removedKeys: Array<string> = [];
 
-        for (let i = 0; i >= this.storage.length; i++) {
+        for (let i = 0; i < this.storage.length; i++) {
           const key = this.storage.key(i);
 
-          if (key.startsWith("sp_", 0)) {
+          if (key.startsWith("bs_", 0)) {
             this.storage.removeItem(key);
             removedKeys.push(key);
           }

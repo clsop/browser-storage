@@ -9,6 +9,13 @@ import { BrowserStorageFactory } from "../src/browser-storage-factory";
 import KeyValueStorage from "../src/storage/keyvalue-storage";
 import BrowserStorage from "../typings/browser-storage";
 
+type TestObj = {
+  prop1: number;
+  prop2: string;
+  prop3: Object;
+  prop4: Array<any>;
+};
+
 // session and local storage has similar api
 @suite("KeyValue storage: key/value api tests")
 class KeyValueApiTests {
@@ -50,7 +57,6 @@ class KeyValueApiTests {
   }
 }
 
-// session and local storage has similar api
 @suite("KeyValue storage: key/value set tests")
 class KeyValueSetTests {
   private storage: BrowserStorage.IBrowserStorage;
@@ -90,19 +96,16 @@ class KeyValueSetTests {
   @test("can set a complex value")
   public async canSetComplexValue() {
     const key = "key";
-    const value: { value1: number; value2: string; value3: Array<number> } = {
-      value1: 1,
-      value2: "test",
-      value3: [2],
+    const value: TestObj = {
+      prop1: 1,
+      prop2: "test",
+      prop3: { test: "test" },
+      prop4: [1, 2],
     };
     let setSpy = sinon.spy(window.localStorage, "setItem");
 
     // act
-    await this.storage.set<{
-      value1: number;
-      value2: string;
-      value3: Array<number>;
-    }>({
+    await this.storage.set<TestObj>({
       key: key,
       value: value,
     });
@@ -116,35 +119,30 @@ class KeyValueSetTests {
   public async canSetComplexValues() {
     // arrange
     const keys = ["key1", "key2", "key3"];
-    const values: Array<{
-      value1: number;
-      value2: string;
-      value3: Array<number>;
-    }> = [
+    const values: Array<TestObj> = [
       {
-        value1: 1,
-        value2: "test",
-        value3: [2],
+        prop1: 1,
+        prop2: "test",
+        prop3: {},
+        prop4: [2],
       },
       {
-        value1: 2,
-        value2: "test2",
-        value3: [3, 2],
+        prop1: 2,
+        prop2: "test 2",
+        prop3: { test: "test" },
+        prop4: [1, 3],
       },
       {
-        value1: 3,
-        value2: "test3",
-        value3: [3, 2, 5, 4, 1],
+        prop1: 3,
+        prop2: "test 3",
+        prop3: { test: "test" },
+        prop4: [4, 7, 23, 56],
       },
     ];
     let setSpy = sinon.spy(window.localStorage, "setItem");
 
     // act
-    await this.storage.set<{
-      value1: number;
-      value2: string;
-      value3: Array<number>;
-    }>([
+    await this.storage.set<TestObj>([
       {
         key: keys[0],
         value: values[0],
@@ -231,370 +229,474 @@ class KeyValueSetTests {
   }
 }
 
-// session and local storage has similar api
-describe("KeyValue storage (localStorage and sessionStorage)", () => {
-  xdescribe("key/value get tests", () => {
-    let storage: BrowserStorage.IBrowserStorage;
+@suite("KeyValue storage: key/value get tests")
+class KeyValueGetTests {
+  private storage: BrowserStorage.IBrowserStorage;
 
-    before(() => {
-      stubs.defineWindow();
-    });
+  public static before() {
+    stubs.defineWindow();
+  }
 
-    after(() => {
-      stubs.undefineWindow();
-    });
+  public static after() {
+    stubs.undefineWindow();
+  }
 
-    beforeEach(() => {
-      stubs.defineStorage();
-      storage = BrowserStorageFactory.getStorage(StorageType.Local);
-    });
+  public before() {
+    stubs.defineStorage();
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Local);
+  }
 
-    afterEach(() => {
-      stubs.undefineStorage();
-    });
+  public after() {
+    stubs.undefineStorage();
+  }
 
-    it("can get a simple value", (done: Mocha.Done) => {
-      // arrange
-      let key = "someitem";
-      let value = "value";
-      let getStub = sinon
-        .stub(window.localStorage, "getItem")
-        .withArgs(key)
-        .returns(value);
+  @test("can get a simple value")
+  public async canGetSimpleValueTest(): Promise<any> {
+    // arrange
+    const key = "someitem";
+    const storageKey = `bs_${key}`;
+    const value = "value";
+    let getStub = sinon
+      .stub(window.localStorage, "getItem")
+      .withArgs(storageKey)
+      .returns(JSON.stringify(value));
 
-      // act
-      storage
-        .get<string>(key)
-        .then((data: BrowserStorage.KeyValueOrError<string>) => {
-          // assert
-          getStub.calledOnce.should.be.true();
-          getStub.calledWith(key).should.be.true();
-          data.should.have.property("key", key);
-          data.should.have.property("value", value);
-          done();
-        });
-    });
+    // act
+    const data = (await this.storage.get<string>(
+      key
+    )) as BrowserStorage.KeyValueOrError<string>;
 
-    it("can get simple values", (done: Mocha.Done) => {
-      // arrange
-      let keys = ["item1", "item2", "item3", "item4"];
-      let values = ["value1", "value2", "value3", "value4"];
-      let getStub = sinon.stub(window.localStorage, "getItem");
-      getStub.withArgs(keys[0]).returns(values[0]);
-      getStub.withArgs(keys[1]).returns(values[1]);
-      getStub.withArgs(keys[2]).returns(values[2]);
-      getStub.withArgs(keys[3]).returns(values[3]);
+    // assert
+    getStub.calledOnce.should.be.true();
+    getStub.calledWith(storageKey).should.be.true();
+    data.key.should.be.equal(key);
+    data.value.should.be.equal(value);
+  }
 
-      // act
-      storage
-        .get<string>(keys)
-        .then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
-          // assert
-          getStub.callCount.should.be.exactly(4);
-          getStub.calledWith(keys[0]).should.be.true();
-          getStub.calledWith(keys[1]).should.be.true();
-          getStub.calledWith(keys[2]).should.be.true();
-          getStub.calledWith(keys[3]).should.be.true();
-          data[0].should.have.property("key", keys[0]);
-          data[0].should.have.property("value", values[0]);
-          data[1].should.have.property("key", keys[1]);
-          data[1].should.have.property("value", values[1]);
-          data[2].should.have.property("key", keys[2]);
-          data[2].should.have.property("value", values[2]);
-          data[3].should.have.property("key", keys[3]);
-          data[3].should.have.property("value", values[3]);
-          done();
-        });
-    });
+  @test("can get simple values")
+  public async canGetSimpleValuesTest(): Promise<any> {
+    // arrange
+    const keys = ["item1", "item2", "item3", "item4"];
+    const values = ["value1", "value2", "value3", "value4"];
+    let getStub = sinon.stub(window.localStorage, "getItem");
 
-    it("can get a complex value", (done: Mocha.Done) => {
-      // arrange
-      let key: string = "item";
-      let value: {
-        prop1: number;
-        prop2: string;
-        prop3: Object;
-        prop4: Array<any>;
-      } = {
+    for (let i in keys) {
+      const storageKey = `bs_${keys[i]}`;
+      getStub.withArgs(storageKey).returns(JSON.stringify(values[i]));
+    }
+
+    // act
+    const data = (await this.storage.get<string>(keys)) as Array<
+      BrowserStorage.KeyValueOrError<string>
+    >;
+
+    // assert
+    getStub.callCount.should.be.exactly(4);
+
+    for (let i in data) {
+      const storageKey = `bs_${data[i].key}`;
+      getStub.calledWith(storageKey).should.be.true();
+      data[i].key.should.be.equal(keys[i]);
+      data[i].value.should.be.equal(values[i]);
+    }
+  }
+
+  @test("can get a complex value")
+  public async canGetComplexValueTest(): Promise<any> {
+    // arrange
+    const key = "item";
+    const storageKey = `bs_${key}`;
+    const value: TestObj = {
+      prop1: 1,
+      prop2: key,
+      prop3: { test: "value" },
+      prop4: [key, key],
+    };
+    let getStub = sinon
+      .stub(window.localStorage, "getItem")
+      .withArgs(storageKey)
+      .returns(JSON.stringify(value));
+
+    // act
+    const data = (await this.storage.get<{
+      prop1: number;
+      prop2: string;
+      prop3: Object;
+      prop4: Array<any>;
+    }>(key)) as BrowserStorage.KeyValueOrError<TestObj>;
+
+    // assert
+    getStub.calledOnce.should.be.true();
+    getStub.calledWith(storageKey).should.be.true();
+    data.key.should.be.equal(key);
+    data.value.should.be.deepEqual(value);
+  }
+
+  @test("can get complex values")
+  public async canGetComplexValuesTest(): Promise<any> {
+    // arrange
+    const keys: Array<string> = ["item1", "item2", "item3"];
+    const values: Array<TestObj> = [
+      {
         prop1: 1,
-        prop2: key,
-        prop3: { test: "value" },
-        prop4: [key, key],
-      };
-      let getStub = sinon
-        .stub(window.localStorage, "getItem")
-        .withArgs(key)
-        .returns(JSON.stringify(value));
+        prop2: "test1",
+        prop3: { test: 45 },
+        prop4: [3, 1],
+      },
+      {
+        prop1: 2,
+        prop2: "test2",
+        prop3: { test: "some" },
+        prop4: [55],
+      },
+      {
+        prop1: 3,
+        prop2: "test3",
+        prop3: { test: { new: "test" } },
+        prop4: ["one", "two"],
+      },
+    ];
+    let getStub = sinon.stub(window.localStorage, "getItem");
 
-      // act
-      storage
-        .get<{
-          prop1: number;
-          prop2: string;
-          prop3: Object;
-          prop4: Array<any>;
-        }>(key)
-        .then(
-          (
-            data: BrowserStorage.KeyValueOrError<{
-              prop1: number;
-              prop2: string;
-              prop3: Object;
-              prop4: Array<any>;
-            }>
-          ) => {
-            // assert
-            getStub.calledOnce.should.be.true();
-            getStub.calledWith(key).should.be.true();
-            data.should.have.property("key", key);
-            data.should.have.property("value", value);
-            done();
-          }
-        );
-    });
+    for (let i in keys) {
+      getStub.withArgs(`bs_${keys[i]}`).returns(JSON.stringify(values[0]));
+    }
 
-    it("can get complex values", (done: Mocha.Done) => {
-      // arrange
-      let keys: Array<string> = ["item1", "item2", "item3"];
-      let values: Array<{ prop1: number; prop2: string }> = [
-        {
-          prop1: 1,
-          prop2: "test1",
-        },
-        {
-          prop1: 2,
-          prop2: "test2",
-        },
-        {
-          prop1: 3,
-          prop2: "test3",
-        },
-      ];
-      let getStub = sinon.stub(window.localStorage, "getItem");
-      getStub.withArgs(keys[0]).returns(JSON.stringify(values[0]));
-      getStub.withArgs(keys[1]).returns(JSON.stringify(values[1]));
-      getStub.withArgs(keys[2]).returns(JSON.stringify(values[2]));
+    // act
+    const data = (await this.storage.get<TestObj>(keys)) as Array<
+      BrowserStorage.KeyValueOrError<TestObj>
+    >;
 
-      // act
-      storage
-        .get<{ prop1: number; prop2: string }>(keys)
-        .then(
-          (
-            data: Array<
-              BrowserStorage.KeyValueOrError<{ prop1: number; prop2: string }>
-            >
-          ) => {
-            // assert
-            getStub.calledThrice.should.be.true();
-            getStub.calledWith(keys[0]).should.be.true();
-            getStub.calledWith(keys[1]).should.be.true();
-            getStub.calledWith(keys[2]).should.be.true();
-            data[0].should.have.property("key", keys[0]);
-            data[0].should.have.property("value", values[0]);
-            data[1].should.have.property("key", keys[1]);
-            data[1].should.have.property("value", values[1]);
-            data[2].should.have.property("key", keys[2]);
-            data[2].should.have.property("value", values[2]);
-            done();
-          }
-        );
-    });
+    // assert
+    getStub.calledThrice.should.be.true();
 
-    it("will fail to get a value if it doesn't exist", (done: Mocha.Done) => {
-      // arrange
-      let key: string = "item";
-      let getStub = sinon
-        .stub(window.localStorage, "getItem")
-        .withArgs(key)
-        .returns(null);
+    for (let i in data) {
+      getStub.calledWith(`bs_${data[i].key}`).should.be.true();
+      data[0].key.should.be.equal(keys[0]);
+      data[0].value.should.be.deepEqual(values[0]);
+    }
+  }
 
-      // act
-      storage
-        .get<string>(key)
-        .catch((reason: BrowserStorage.KeyValueOrError<string>) => {
-          // assert
-          getStub.calledOnce.should.be.true();
-          getStub.calledWith(key).should.be.true();
-          reason.key.should.equal(key);
-          reason.error.should.not.be.empty();
-          done();
-        });
-    });
+  @test("will fail to get a value if it doesn't exist")
+  public async willFailGetValue(): Promise<any> {
+    // arrange
+    const key = "item";
+    const storageKey = `bs_${key}`;
+    let getStub = sinon
+      .stub(window.localStorage, "getItem")
+      .withArgs(storageKey)
+      .returns(null);
 
-    it("will only get the values that exists", (done: Mocha.Done) => {
-      // arrange
-      let keys: Array<string> = ["item1", "item2", "item3"];
-      let values: Array<string> = ["value1"];
-      let getStub = sinon.stub(window.localStorage, "getItem");
-      getStub.withArgs(keys[0]).returns(values[0]);
-      getStub.returns(null);
+    // act
+    try {
+      await this.storage.get<string>(key);
+    } catch (ex: any) {
+      const reason = ex as BrowserStorage.KeyValueOrError<string>;
 
-      // act
-      storage
-        .get<string>(keys)
-        .then((data: Array<BrowserStorage.KeyValueOrError<string>>) => {
-          // assert
-          getStub.calledThrice.should.be.true();
-          getStub.calledWith(keys[0]).should.be.true();
-          getStub.calledWith(keys[1]).should.be.true();
-          getStub.calledWith(keys[2]).should.be.true();
-          data.should.have.length(3);
-          data[0].should.have.property("key", keys[0]);
-          data[0].should.have.property("value", values[0]);
-          data[1].should.have.property("key", keys[1]);
-          data[1].should.have.ownProperty("error").and.not.be.empty();
-          data[2].should.have.property("key", keys[2]);
-          data[2].should.have.ownProperty("error").and.not.be.empty();
-          done();
-        });
-    });
+      // assert
+      getStub.calledOnce.should.be.true();
+      getStub.calledWith(storageKey).should.be.true();
+      reason.key.should.equal(key);
+      reason.error.should.not.be.empty();
+    }
+  }
 
-    it("will fail to get values, when they don't exist", (done: Mocha.Done) => {
-      // arrange
-      let keys: Array<string> = ["item1", "item2"];
-      let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
+  @test("will only get the values that exists")
+  public async willOnlyGetSomeValues(): Promise<any> {
+    // arrange
+    const keys: Array<string> = ["item1", "item2", "item3"];
+    const values: Array<string> = ["value1", "value2"];
+    let getStub = sinon.stub(window.localStorage, "getItem");
+    getStub.withArgs(`bs_${keys[0]}`).returns(JSON.stringify(values[0]));
+    getStub.withArgs(`bs_${keys[1]}`).returns(JSON.stringify(values[1]));
+    getStub.returns(null);
 
-      // act
-      storage
-        .get<string>(keys)
-        .catch((reason: Array<BrowserStorage.KeyValueOrError<string>>) => {
-          // assert
-          getStub.calledTwice.should.be.true();
-          getStub.calledWith(keys[0]).should.be.true();
-          getStub.calledWith(keys[1]).should.be.true();
-          reason[0].key.should.equal(keys[0]);
-          reason[0].should.have.ownProperty("error").and.not.be.empty();
-          reason[1].key.should.equal(keys[1]);
-          reason[1].should.have.ownProperty("error").and.not.be.empty();
-          done();
-        });
-    });
-  });
+    // act
+    const data = (await this.storage.get<string>(keys)) as Array<
+      BrowserStorage.KeyValueOrError<string>
+    >;
 
-  xdescribe("key/value remove tests", () => {
-    let storage: BrowserStorage.IBrowserStorage;
+    // assert
+    getStub.calledThrice.should.be.true();
+    data.should.have.length(keys.length);
 
-    before(() => {
-      stubs.defineWindow();
-    });
+    data[0].key.should.be.equal(keys[0]);
+    data[0].value.should.be.equal(values[0]);
+    data[1].key.should.be.equal(keys[1]);
+    data[1].value.should.be.equal(values[1]);
 
-    after(() => {
-      stubs.undefineWindow();
-    });
+    data[2].key.should.be.equal(keys[2]);
+    data[2].error.should.not.be.empty();
+  }
 
-    beforeEach(() => {
-      stubs.defineStorage();
-      storage = BrowserStorageFactory.getStorage(StorageType.Local);
-    });
+  @test("will fail to get values, when they don't exist")
+  public async willFailGetAllValues(): Promise<any> {
+    // arrange
+    const keys = ["item1", "item2"];
+    let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
 
-    afterEach(() => {
-      stubs.undefineStorage();
-    });
+    // act
+    try {
+      await this.storage.get<string>(keys);
+    } catch (ex: any) {
+      const reason = ex as Array<BrowserStorage.KeyValueOrError<string>>;
 
-    it("can remove a value", (done: Mocha.Done) => {
-      // arrange
-      let key = "test";
-      let removeStub = sinon
-        .stub(window.localStorage, "removeItem")
-        .withArgs(key);
+      // assert
+      getStub.calledTwice.should.be.true();
+      getStub.calledWith(`bs_${keys[0]}`).should.be.true();
+      getStub.calledWith(`bs_${keys[1]}`).should.be.true();
 
-      // act
-      storage.remove(key).then((data: BrowserStorage.KeyValueOrError<void>) => {
-        removeStub.calledOnce.should.be.true();
-        removeStub.calledWith(key).should.be.true();
-        data.key.should.equal(key);
-        done();
-      });
-    });
+      reason[0].key.should.equal(keys[0]);
+      reason[0].error.should.not.be.empty();
+      reason[1].key.should.equal(keys[1]);
+      reason[1].should.not.be.empty();
+    }
+  }
+}
 
-    it("will fail to remove a value", (done: Mocha.Done) => {
-      // arrange
-      let key = "test";
-      let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
-      let removeStub = sinon.stub(window.localStorage, "removeItem");
+@suite("KeyValue storage: key/value remove tests")
+class KeyValueRemoveTests {
+  private storage: BrowserStorage.IBrowserStorage;
 
-      // act
-      storage
-        .remove(key)
-        .catch((reason: BrowserStorage.KeyValueOrError<void>) => {
-          // assert
-          reason.key.should.equal(key);
-          reason.should.have.ownProperty("error").and.not.be.empty();
-          done();
-        });
-    });
+  public static before() {
+    stubs.defineWindow();
+  }
 
-    it("will only remove values that exists", (done: Mocha.Done) => {
-      // arrange
-      let keys: Array<string> = ["item1", "item2"];
-      let removeStub = sinon.stub(window.localStorage, "removeItem");
-      let getStub = sinon.stub(window.localStorage, "getItem");
-      getStub.withArgs(keys[0]).returns("value");
-      getStub.returns(null);
+  public static after() {
+    stubs.undefineWindow();
+  }
 
-      // act
-      storage
-        .remove(keys)
-        .then((data: Array<BrowserStorage.KeyValueOrError<void>>) => {
-          // assert
-          removeStub.calledOnce.should.be.true();
-          removeStub.calledWith(keys[0]).should.be.true();
-          data[0].key.should.equal(keys[0]);
-          data[1].key.should.equal(keys[1]);
-          data[1].should.have.ownProperty("error").and.not.be.empty();
-          done();
-        });
-    });
+  public before() {
+    stubs.defineStorage();
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Local);
+  }
 
-    it("will fail to remove values that doesn't exist", (done: Mocha.Done) => {
-      // arrange
-      let keys: Array<string> = ["item1", "item2"];
-      let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
+  public after() {
+    stubs.undefineStorage();
+  }
 
-      // act
-      storage
-        .remove(keys)
-        .catch((reason: Array<BrowserStorage.KeyValueOrError<void>>) => {
-          // assert
-          reason[0].key.should.equal(keys[0]);
-          reason[0].should.have.ownProperty("error").and.not.be.empty();
-          reason[1].key.should.equal(keys[1]);
-          reason[1].should.have.ownProperty("error").and.not.be.empty();
-          done();
-        });
-    });
-  });
+  @test("can remove a value")
+  public async canRemoveValueTest(): Promise<any> {
+    // arrange
+    const key = "test";
+    let removeStub = sinon
+      .stub(window.localStorage, "removeItem")
+      .withArgs(`bs_${key}`);
 
-  xdescribe("key/value clear tests", () => {
-    let storage: BrowserStorage.IBrowserStorage;
+    // act
+    const data = (await this.storage.remove(
+      key
+    )) as BrowserStorage.KeyValueOrError<void>;
 
-    before(() => {
-      stubs.defineWindow();
-    });
+    // assert
+    removeStub.calledOnce.should.be.true();
+    removeStub.calledWith(`bs_${key}`).should.be.true();
+    data.key.should.equal(key);
+  }
 
-    after(() => {
-      stubs.undefineWindow();
-    });
+  @test("will fail to remove a value")
+  public async willFailRemoveTest(): Promise<any> {
+    // arrange
+    const key = "test";
+    let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
+    let removeStub = sinon.stub(window.localStorage, "removeItem");
 
-    beforeEach(() => {
-      stubs.defineStorage();
-      storage = BrowserStorageFactory.getStorage(StorageType.Local);
-    });
+    // act
+    try {
+      await this.storage.remove(key);
+    } catch (ex: any) {
+      const reason = ex as BrowserStorage.KeyValueOrError<void>;
 
-    afterEach(() => {
-      stubs.undefineStorage();
-    });
+      // assert
+      reason.key.should.equal(key);
+      reason.error.should.not.be.empty();
+    }
+  }
 
-    it("can clear the storage", (done: Mocha.Done) => {
-      // arrange
-      let clearSpy = sinon.spy(window.localStorage, "clear");
+  @test("will only remove values that exists")
+  public async willRemoveSomeValuesTest(): Promise<any> {
+    // arrange
+    const keys: Array<string> = ["item1", "item2"];
+    let removeStub = sinon.stub(window.localStorage, "removeItem");
+    let getStub = sinon.stub(window.localStorage, "getItem");
+    getStub.withArgs(`bs_${keys[0]}`).returns("value");
+    getStub.returns(null);
 
-      // act
-      storage.clear().then(() => {
-        // assert
-        clearSpy.calledOnce.should.be.true();
-        done();
-      });
-    });
-  });
-});
+    // act
+    const data = (await this.storage.remove(keys)) as Array<
+      BrowserStorage.KeyValueOrError<void>
+    >;
+
+    // assert
+    removeStub.calledOnce.should.be.true();
+    removeStub.calledWith(`bs_${keys[0]}`).should.be.true();
+    data[0].key.should.equal(keys[0]);
+    data[0].should.not.have.ownProperty("error");
+    data[1].key.should.equal(keys[1]);
+    data[1].error.should.not.be.empty();
+  }
+
+  @test("will fail to remove values that doesn't exist")
+  public async willFailRemoveAllValuesTest(): Promise<any> {
+    // arrange
+    const keys = ["item1", "item2"];
+    let getStub = sinon.stub(window.localStorage, "getItem").returns(null);
+
+    // act
+    try {
+      await this.storage.remove(keys);
+    } catch (ex: any) {
+      const reason = ex as Array<BrowserStorage.KeyValueOrError<void>>;
+
+      // assert
+      reason[0].key.should.equal(keys[0]);
+      reason[0].error.should.not.be.empty();
+      reason[1].key.should.equal(keys[1]);
+      reason[1].should.not.be.empty();
+    }
+  }
+}
+
+@suite("KeyValue storage: key/value clear tests")
+class KeyValueClearTests {
+  private storage: BrowserStorage.IBrowserStorage;
+
+  public static before() {
+    stubs.defineWindow();
+  }
+
+  public static after() {
+    stubs.undefineWindow();
+  }
+
+  public before() {
+    stubs.defineStorage();
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Local);
+  }
+
+  public after() {
+    stubs.undefineStorage();
+  }
+
+  @test("can clear the storage")
+  public async canClearValuesTest(): Promise<any> {
+    // arrange
+    const keys = ["item1", "item2", "item3"];
+    sinon.replace(window.localStorage, "length", keys.length);
+    let keyStub = sinon.stub(window.localStorage, "key");
+    let removeSpy = sinon.spy(window.localStorage, "removeItem");
+
+    for (let i in keys) {
+      keyStub.withArgs(parseInt(i)).returns(`bs_${keys[i]}`);
+    }
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    keyStub.calledThrice.should.be.true();
+    removeSpy.calledThrice.should.be.true();
+  }
+
+  @test("will only clear storage entries")
+  public async willOnlyClearStorageTest(): Promise<any> {
+    // arrange
+    const keys = ["item1", "item2"];
+    sinon.replace(window.localStorage, "length", keys.length + 1);
+    let keyStub = sinon.stub(window.localStorage, "key");
+    let removeSpy = sinon.spy(window.localStorage, "removeItem");
+
+    keyStub.withArgs(0).returns(`bs_${keys[0]}`);
+    keyStub.withArgs(1).returns("other");
+    keyStub.withArgs(2).returns(`bs_${keys[1]}`);
+
+    // act
+    await this.storage.clear();
+
+    // assert
+    keyStub.calledThrice.should.be.true();
+    removeSpy.calledTwice.should.be.true();
+  }
+
+  @test("will fail to clear any")
+  public async willFailClearTest(): Promise<any> {
+    // arrange
+    sinon.replace(window.localStorage, "length", 1);
+    let keyStub = sinon.stub(window.localStorage, "key");
+    let removeSpy = sinon.spy(window.localStorage, "removeItem");
+
+    keyStub.withArgs(0).returns("other");
+
+    // act
+    try {
+      await this.storage.clear();
+    } catch (ex: any) {
+      const reason = ex as BrowserStorage.ValueOrError<void>;
+
+      // assert
+      keyStub.calledOnce.should.be.true();
+      removeSpy.called.should.be.false();
+      reason.error.should.not.be.empty();
+    }
+  }
+}
+
+@suite("KeyValue storage: key/value count tests")
+class KeyValueCountTests {
+  private storage: BrowserStorage.IBrowserStorage;
+
+  public static before() {
+    stubs.defineWindow();
+  }
+
+  public static after() {
+    stubs.undefineWindow();
+  }
+
+  public before() {
+    stubs.defineStorage();
+    this.storage = BrowserStorageFactory.getStorage(StorageType.Local);
+  }
+
+  public after() {
+    stubs.undefineStorage();
+  }
+
+  @test("can count enries")
+  public async canCountTest(): Promise<any> {
+    // arrange
+    const keys = ["key1", "key2"];
+    let keyStub = sinon.stub(window.localStorage, "key");
+    sinon.replace(window.localStorage, "length", keys.length);
+
+    for (let i in keys) {
+      keyStub.withArgs(parseInt(i)).returns(`bs_${keys[i]}`);
+    }
+
+    // act
+    const data = await this.storage.count();
+    
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+
+  @test("will only count storage entries")
+  public async willOnlyCountStorage(): Promise<any> {
+    // arrange
+    const keys = ["key1", "key2"];
+    let keyStub = sinon.stub(window.localStorage, "key");
+    sinon.replace(window.localStorage, "length", keys.length + 1);
+
+    keyStub.withArgs(2).returns("other");
+
+    for (let i in keys) {
+      keyStub.withArgs(parseInt(i)).returns(`bs_${keys[i]}`);
+    }
+
+    // act
+    const data = await this.storage.count();
+    
+    // assert
+    data.value.should.be.equal(keys.length);
+  }
+}

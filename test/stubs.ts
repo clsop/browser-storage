@@ -92,6 +92,18 @@ const defineStorage = () => {
 			configurable: true,
 			enumerable: true,
 			writable: false
+		},
+		'key': {
+			value: () => { },
+			configurable: true,
+			enumerable: true,
+			writable: false
+		},
+		'length': {
+			value: 0,
+			configurable: true,
+			enumerable: true,
+			writable: true
 		}
 	};
 	Object.defineProperties(global.window.localStorage, propDefs);
