@@ -39,18 +39,6 @@ jobs:
 
       - name: Run test coverage
         run: pnpm test:pnpm:coverage
-
-      # - uses: actions/checkout@v3
-      # - uses: pnpm/action-setup@v2
-      #   with:
-      #     version: 7.11.0
-      #     cache: pnpm
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '16.16.0'
-      #     cache: 'pnpm'
-      # - run: pnpm i
-      # - run: pnpm test:pnpm:coverage
   build:
     needs: verify
     name: Build package
@@ -90,15 +78,3 @@ jobs:
 
       - name: Build
         run: pnpm build
-
-      # - uses: actions/checkout@v3
-      # - uses: pnpm/action-setup@646cdf48217256a3d0b80361c5a50727664284f2
-      #   with:
-      #     version: 7.11.0
-      #     cache: pnpm
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '16.16.0'
-      #     cache: 'pnpm'
-      # - run: pnpm i
-      # - run: pnpm build

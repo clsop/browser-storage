@@ -83,7 +83,12 @@ export default class CookieStorage
         const aCouples = rawCookie.split(this.keySplit);
 
         if (aCouples.length > 1 && aCouples[0].startsWith("bs_")) {
-          predicate(aCouples[0], typeof aCouples[1] === "string" ? aCouples[1] : JSON.parse(aCouples[1]));
+          predicate(
+            aCouples[0],
+            typeof aCouples[1] === "string"
+              ? aCouples[1]
+              : JSON.parse(aCouples[1])
+          );
         }
       }
     }
@@ -241,11 +246,6 @@ export default class CookieStorage
 
               if (keyValues.length > 0) {
                 for (let valuePair of keyValues) {
-                  // const keyValue: BrowserStorage.KeyValueOrError<void> = {
-                  //   key: valuePair.key,
-                  //   value: valuePair.value,
-                  // };
-
                   if (!valuePair.error) {
                     document.cookie = cookieOptions.create({
                       key: valuePair.key,
