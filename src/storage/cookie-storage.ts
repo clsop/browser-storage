@@ -241,15 +241,15 @@ export default class CookieStorage
 
               if (keyValues.length > 0) {
                 for (let valuePair of keyValues) {
-                  const keyValue: BrowserStorage.KeyValueOrError<void> = {
-                    key: valuePair.key,
-                    value: valuePair.value,
-                  };
+                  // const keyValue: BrowserStorage.KeyValueOrError<void> = {
+                  //   key: valuePair.key,
+                  //   value: valuePair.value,
+                  // };
 
-                  if (!keyValue.error) {
+                  if (!valuePair.error) {
                     document.cookie = cookieOptions.create({
-                      key: keyValue.key,
-                      value: keyValue.value,
+                      key: valuePair.key,
+                      value: valuePair.value,
                     });
                   }
                 }
